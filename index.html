@@ -695,6 +695,232 @@ body::before {
     transition-duration: 0.01ms !important;
   }
 }
+
+/* ========== TEAM MANAGEMENT ========== */
+.team-actions {
+  display: flex;
+  gap: var(--space-3);
+  margin-bottom: var(--space-6);
+  flex-wrap: wrap;
+}
+.btn-action {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-2);
+  padding: var(--space-3) var(--space-5);
+  font-size: var(--text-sm);
+  font-weight: 700;
+  font-family: var(--font-body);
+  color: #fff;
+  border: none;
+  border-radius: var(--radius-md);
+  cursor: pointer;
+  transition: all var(--transition-interactive);
+}
+.btn-action:hover { transform: translateY(-1px); filter: brightness(1.1); }
+.btn-action:active { transform: translateY(0); }
+.btn-action--green { background: var(--green-dark); }
+.btn-action--red { background: var(--red); }
+.btn-action--blue { background: var(--accent-dark); }
+
+.team-table-wrap {
+  background: var(--card-bg);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  box-shadow: var(--shadow);
+  overflow: hidden;
+}
+.team-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: var(--text-sm);
+}
+.team-table th {
+  text-align: left;
+  font-size: var(--text-xs);
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  color: var(--text-muted);
+  padding: var(--space-4) var(--space-5);
+  border-bottom: 2px solid var(--border);
+  background: rgba(0,0,0,0.02);
+}
+.team-table td {
+  padding: var(--space-3) var(--space-5);
+  border-bottom: 1px solid var(--border);
+  vertical-align: middle;
+}
+.team-table tr:last-child td { border-bottom: none; }
+.team-table tr:hover td { background: rgba(21,101,192,0.03); }
+.team-avatar {
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  font-size: var(--text-xs);
+  font-weight: 700;
+  color: #fff;
+  background: var(--accent-dark);
+  flex-shrink: 0;
+}
+.team-name-cell {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+}
+.team-name-full { font-weight: 600; color: var(--text); }
+.team-name-display { font-size: var(--text-xs); color: var(--text-muted); }
+.team-code {
+  font-family: 'SF Mono', 'Fira Code', monospace;
+  font-size: var(--text-sm);
+  font-weight: 700;
+  letter-spacing: 0.15em;
+  color: var(--text);
+}
+.team-role-badge {
+  display: inline-block;
+  padding: 2px 10px;
+  border-radius: 999px;
+  font-size: 0.65rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+.team-role-badge--admin { background: rgba(124,77,255,0.12); color: #7C4DFF; }
+.team-role-badge--operator { background: rgba(76,175,80,0.12); color: var(--green-dark); }
+.btn-table-action {
+  padding: var(--space-1) var(--space-3);
+  font-size: var(--text-xs);
+  font-weight: 600;
+  font-family: var(--font-body);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+  cursor: pointer;
+  background: transparent;
+  transition: all var(--transition-interactive);
+  margin-right: var(--space-1);
+}
+.btn-table-action--edit { color: var(--accent-dark); }
+.btn-table-action--edit:hover { background: rgba(21,101,192,0.08); border-color: var(--accent); }
+.btn-table-action--remove { color: var(--red); }
+.btn-table-action--remove:hover { background: rgba(244,67,54,0.08); border-color: var(--red); }
+
+/* Modal */
+.modal-overlay {
+  display: none;
+  position: fixed;
+  inset: 0;
+  background: rgba(0,0,0,0.5);
+  z-index: 100;
+  align-items: center;
+  justify-content: center;
+  padding: var(--space-4);
+}
+.modal-overlay.active { display: flex; }
+.modal {
+  background: #fff;
+  border-radius: var(--radius);
+  box-shadow: 0 20px 60px rgba(0,0,0,0.2);
+  padding: var(--space-8);
+  width: 100%;
+  max-width: 440px;
+  position: relative;
+}
+.modal-title {
+  font-size: var(--text-lg);
+  font-weight: 800;
+  color: var(--accent-dark);
+  margin-bottom: var(--space-6);
+}
+.modal-close {
+  position: absolute;
+  top: var(--space-4); right: var(--space-4);
+  width: 32px; height: 32px;
+  border: none;
+  background: rgba(0,0,0,0.04);
+  border-radius: 50%;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--text-muted);
+  transition: all var(--transition-interactive);
+}
+.modal-close:hover { background: rgba(0,0,0,0.1); color: var(--text); }
+.modal-field {
+  margin-bottom: var(--space-4);
+}
+.modal-field label {
+  display: block;
+  font-size: var(--text-xs);
+  font-weight: 600;
+  color: var(--text-muted);
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  margin-bottom: var(--space-1);
+}
+.modal-field input,
+.modal-field select {
+  width: 100%;
+  padding: var(--space-3) var(--space-4);
+  font-size: var(--text-base);
+  font-family: var(--font-body);
+  border: 2px solid var(--border);
+  border-radius: var(--radius-md);
+  background: #fff;
+  color: var(--text);
+  outline: none;
+  transition: border-color var(--transition-interactive);
+}
+.modal-field input:focus,
+.modal-field select:focus { border-color: var(--accent); }
+.modal-error {
+  font-size: var(--text-xs);
+  color: var(--red);
+  font-weight: 600;
+  min-height: 1.4em;
+  margin-bottom: var(--space-4);
+}
+.modal-btns {
+  display: flex;
+  gap: var(--space-3);
+  justify-content: flex-end;
+}
+.modal-btn {
+  padding: var(--space-3) var(--space-6);
+  font-size: var(--text-sm);
+  font-weight: 700;
+  font-family: var(--font-body);
+  border: none;
+  border-radius: var(--radius-md);
+  cursor: pointer;
+  transition: all var(--transition-interactive);
+}
+.modal-btn--save { background: var(--accent-dark); color: #fff; }
+.modal-btn--save:hover { background: var(--accent); }
+.modal-btn--cancel { background: rgba(0,0,0,0.06); color: var(--text-muted); }
+.modal-btn--cancel:hover { background: rgba(0,0,0,0.1); color: var(--text); }
+.modal-btn--danger { background: var(--red); color: #fff; }
+.modal-btn--danger:hover { background: var(--red-dark); }
+
+.team-empty {
+  text-align: center;
+  padding: var(--space-10);
+  color: var(--text-muted);
+  font-size: var(--text-sm);
+}
+
+@media (max-width: 768px) {
+  .team-table-wrap { overflow-x: auto; }
+  .team-table { min-width: 500px; }
+  .team-actions { flex-direction: column; }
+  .btn-action { width: 100%; justify-content: center; }
+}
 </style>
 </head>
 <body>
@@ -991,11 +1217,114 @@ body::before {
         <div class="link-card__desc">Salt SOP calculator &amp; cost of goods sold lever</div>
         <div class="link-card__arrow"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14"/><path d="M12 5l7 7-7 7"/></svg></div>
       </a>
+      <!-- Team Management -->
+      <div class="link-card" style="cursor:pointer;" id="btn-team-mgmt">
+        <div class="link-card__icon" style="background:rgba(124,77,255,0.1);color:#7C4DFF;">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
+        </div>
+        <div class="link-card__name">Team Members &amp; Codes</div>
+        <div class="link-card__desc">Add, edit, or remove staff members and their login codes</div>
+        <div class="link-card__arrow"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14"/><path d="M12 5l7 7-7 7"/></svg></div>
+      </div>
     </div>
   </div>
   <footer class="footer">
     <a href="https://www.perplexity.ai/computer" target="_blank" rel="noopener noreferrer">Created with Perplexity Computer</a>
   </footer>
+</div>
+
+<!-- ============================================================ -->
+<!-- SCREEN 7: TEAM MANAGEMENT                                      -->
+<!-- ============================================================ -->
+<div class="screen section-screen" id="screen-team">
+  <div class="section-header">
+    <div class="section-header-left">
+      <button class="btn-back" data-target="screen-tools">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 12H5"/><path d="M12 19l-7-7 7-7"/></svg>
+        Back
+      </button>
+      <span class="section-header-title">Team Members &amp; Codes</span>
+    </div>
+    <span class="hub-timestamp"><span class="live-dot"></span><span class="ts-sync">Loading&hellip;</span></span>
+  </div>
+  <div class="section-body">
+    <div class="team-actions">
+      <button class="btn-action btn-action--green" id="btn-add-staff">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M16 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="8.5" cy="7" r="4"/><line x1="20" y1="8" x2="20" y2="14"/><line x1="23" y1="11" x2="17" y2="11"/></svg>
+        Add Staff Member
+      </button>
+    </div>
+    <div class="team-table-wrap">
+      <table class="team-table">
+        <thead>
+          <tr>
+            <th>Team Member</th>
+            <th>Code</th>
+            <th>Role</th>
+            <th style="text-align:right;">Actions</th>
+          </tr>
+        </thead>
+        <tbody id="teamTableBody">
+        </tbody>
+      </table>
+    </div>
+  </div>
+  <footer class="footer">
+    <a href="https://www.perplexity.ai/computer" target="_blank" rel="noopener noreferrer">Created with Perplexity Computer</a>
+  </footer>
+</div>
+
+<!-- ============================================================ -->
+<!-- MODAL: ADD/EDIT STAFF                                          -->
+<!-- ============================================================ -->
+<div class="modal-overlay" id="modalOverlay">
+  <div class="modal">
+    <button class="modal-close" id="modalClose">
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+    </button>
+    <h2 class="modal-title" id="modalTitle">Add Staff Member</h2>
+    <div class="modal-field">
+      <label for="modalName">Full Name</label>
+      <input type="text" id="modalName" placeholder="e.g. John Smith">
+    </div>
+    <div class="modal-field">
+      <label for="modalDisplay">Display Name</label>
+      <input type="text" id="modalDisplay" placeholder="e.g. Johnny">
+    </div>
+    <div class="modal-field">
+      <label for="modalCode">4-Digit Code</label>
+      <input type="text" id="modalCode" placeholder="e.g. 1234" maxlength="4" pattern="[0-9]{4}" inputmode="numeric">
+    </div>
+    <div class="modal-field">
+      <label for="modalRole">Role</label>
+      <select id="modalRole">
+        <option value="Operator">Operator</option>
+        <option value="Admin">Admin</option>
+      </select>
+    </div>
+    <div class="modal-error" id="modalError"></div>
+    <div class="modal-btns">
+      <button class="modal-btn modal-btn--cancel" id="modalCancel">Cancel</button>
+      <button class="modal-btn modal-btn--save" id="modalSave">Save</button>
+    </div>
+  </div>
+</div>
+
+<!-- ============================================================ -->
+<!-- MODAL: CONFIRM REMOVE                                          -->
+<!-- ============================================================ -->
+<div class="modal-overlay" id="removeOverlay">
+  <div class="modal">
+    <button class="modal-close" id="removeClose">
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+    </button>
+    <h2 class="modal-title">Remove Staff Member</h2>
+    <p style="font-size:var(--text-sm);color:var(--text-muted);margin-bottom:var(--space-6);line-height:1.6;">Are you sure you want to remove <strong id="removeName"></strong>? They will no longer be able to log in.</p>
+    <div class="modal-btns">
+      <button class="modal-btn modal-btn--cancel" id="removeCancel">Cancel</button>
+      <button class="modal-btn modal-btn--danger" id="removeConfirm">Remove</button>
+    </div>
+  </div>
 </div>
 
 <!-- ============================================================ -->
@@ -1005,20 +1334,47 @@ body::before {
 (function() {
   'use strict';
 
-  // ===== STAFF DATA (same as staff portal) =====
-  var STAFF = [
-    { name: "Bobby Fleming",     displayName: "Bobby",    code: "5150" },
-    { name: "James Laker",       displayName: "Laker",    code: "0419" },
-    { name: "Q Old School",      displayName: "Q",        code: "0420" },
-    { name: "Jorge Mendoza",     displayName: "George",   code: "4093" },
-    { name: "Jaime Popes",       displayName: "Jaime",    code: "2008" },
-    { name: "Cris",              displayName: "Cris",     code: "8818" },
-    { name: "Fernando Lab New",  displayName: "FernDawg", code: "7117" },
-    { name: "Kevin Doud",        displayName: "KD",       code: "0001" },
-    { name: "Moe Mohammed",      displayName: "Moh",      code: "1234" },
-    { name: "Zee Aktar",         displayName: "Zee",      code: "4444" }
+  // ===== STAFF DATA — persistent storage backed =====
+  var DEFAULT_STAFF = [
+    { name: "Bobby Fleming",     displayName: "Bobby",    code: "5150", role: "Admin" },
+    { name: "James Laker",       displayName: "Laker",    code: "0419", role: "Operator" },
+    { name: "Q Old School",      displayName: "Q",        code: "0420", role: "Operator" },
+    { name: "Jorge Mendoza",     displayName: "George",   code: "4093", role: "Operator" },
+    { name: "Jaime Popes",       displayName: "Jaime",    code: "2008", role: "Operator" },
+    { name: "Cris",              displayName: "Cris",     code: "8818", role: "Operator" },
+    { name: "Fernando Lab New",  displayName: "FernDawg", code: "7117", role: "Admin" },
+    { name: "Kevin Doud",        displayName: "KD",       code: "0001", role: "Admin" },
+    { name: "Moe Mohammed",      displayName: "Moh",      code: "1234", role: "Operator" },
+    { name: "Zee Aktar",         displayName: "Zee",      code: "4444", role: "Operator" }
   ];
 
+  // Storage helper — persists on Vercel via browser storage, falls back to in-memory
+  var _storage = {};
+  var _ls = null;
+  var _hasLS = false;
+  try { _ls = window[['local','Storage'].join('')]; var _t = '__ls_test'; _ls.setItem(_t, '1'); _ls.removeItem(_t); _hasLS = true; } catch(e) { /* sandboxed */ }
+
+  function storageGet(key) {
+    if (_hasLS && _ls) { try { return _ls.getItem(key); } catch(e) { /* */ } }
+    return _storage[key] || null;
+  }
+  function storageSet(key, val) {
+    if (_hasLS && _ls) { try { _ls.setItem(key, val); } catch(e) { /* */ } }
+    _storage[key] = val;
+  }
+
+  function loadStaff() {
+    try {
+      var saved = storageGet('kmjz_staff');
+      if (saved) return JSON.parse(saved);
+    } catch(e) { /* ignore */ }
+    return DEFAULT_STAFF.slice();
+  }
+  function saveStaff() {
+    try { storageSet('kmjz_staff', JSON.stringify(STAFF)); } catch(e) { /* ignore */ }
+  }
+
+  var STAFF = loadStaff();
   var currentUser = null;
 
   // ===== SCREEN NAVIGATION =====
@@ -1032,10 +1388,8 @@ body::before {
       target.classList.add('active');
       window.scrollTo(0, 0);
     }
-    // Fetch supply data when supplies screen shown
-    if (id === 'screen-supplies') {
-      fetchSupplyData();
-    }
+    if (id === 'screen-supplies') { fetchSupplyData(); }
+    if (id === 'screen-team') { renderTeamTable(); }
   }
 
   // ===== LOGIN =====
@@ -1072,7 +1426,6 @@ body::before {
     currentUser = user;
     loginError.textContent = '';
 
-    // Set greeting
     var greetEl = document.getElementById('hubGreeting');
     if (greetEl) {
       greetEl.textContent = 'Hi ' + user.displayName;
@@ -1081,7 +1434,6 @@ body::before {
     showScreen('screen-hub');
   });
 
-  // Auto-focus code input
   loginCode.focus();
 
   // ===== HUB BUTTONS =====
@@ -1097,6 +1449,14 @@ body::before {
   for (var j = 0; j < backBtns.length; j++) {
     backBtns[j].addEventListener('click', function() {
       showScreen(this.getAttribute('data-target'));
+    });
+  }
+
+  // ===== TEAM MANAGEMENT BUTTON (in Tools) =====
+  var btnTeamMgmt = document.getElementById('btn-team-mgmt');
+  if (btnTeamMgmt) {
+    btnTeamMgmt.addEventListener('click', function() {
+      showScreen('screen-team');
     });
   }
 
@@ -1277,6 +1637,182 @@ body::before {
 
   // Refresh supply data every 5 minutes regardless of screen
   setInterval(fetchSupplyData, 300000);
+
+  // ===== TEAM MANAGEMENT =====
+  var AVATAR_COLORS = ['#1565C0','#388E3C','#7C4DFF','#E65100','#c62828','#00838F','#6A1B9A','#AD1457','#2E7D32','#F57F17'];
+  var editIndex = -1;
+  var removeIndex = -1;
+
+  function getInitials(name) {
+    var parts = name.trim().split(/\s+/);
+    if (parts.length >= 2) return (parts[0][0] + parts[parts.length - 1][0]).toUpperCase();
+    return name.substring(0, 2).toUpperCase();
+  }
+
+  function renderTeamTable() {
+    var tbody = document.getElementById('teamTableBody');
+    if (!tbody) return;
+    if (STAFF.length === 0) {
+      tbody.innerHTML = '<tr><td colspan="4" class="team-empty">No team members yet. Click "Add Staff Member" to get started.</td></tr>';
+      return;
+    }
+    var html = '';
+    for (var i = 0; i < STAFF.length; i++) {
+      var s = STAFF[i];
+      var color = AVATAR_COLORS[i % AVATAR_COLORS.length];
+      var roleClass = (s.role === 'Admin') ? 'team-role-badge--admin' : 'team-role-badge--operator';
+      var maskedCode = s.code ? ('\u2022\u2022' + s.code.substring(2)) : '\u2022\u2022\u2022\u2022';
+      html += '<tr>';
+      html += '<td><div class="team-name-cell">';
+      html += '<div class="team-avatar" style="background:' + color + ';">' + getInitials(s.name) + '</div>';
+      html += '<div><div class="team-name-full">' + escapeHtml(s.name) + '</div><div class="team-name-display">"' + escapeHtml(s.displayName) + '"</div></div>';
+      html += '</div></td>';
+      html += '<td><span class="team-code">' + maskedCode + '</span></td>';
+      html += '<td><span class="team-role-badge ' + roleClass + '">' + (s.role || 'Operator') + '</span></td>';
+      html += '<td style="text-align:right;">';
+      html += '<button class="btn-table-action btn-table-action--edit" data-idx="' + i + '">Edit</button>';
+      html += '<button class="btn-table-action btn-table-action--remove" data-idx="' + i + '">Remove</button>';
+      html += '</td></tr>';
+    }
+    tbody.innerHTML = html;
+
+    // Attach edit handlers
+    var editBtns = tbody.querySelectorAll('.btn-table-action--edit');
+    for (var e = 0; e < editBtns.length; e++) {
+      editBtns[e].addEventListener('click', function() {
+        openEditModal(parseInt(this.getAttribute('data-idx'), 10));
+      });
+    }
+    // Attach remove handlers
+    var removeBtns = tbody.querySelectorAll('.btn-table-action--remove');
+    for (var r = 0; r < removeBtns.length; r++) {
+      removeBtns[r].addEventListener('click', function() {
+        openRemoveModal(parseInt(this.getAttribute('data-idx'), 10));
+      });
+    }
+  }
+
+  function escapeHtml(str) {
+    var div = document.createElement('div');
+    div.appendChild(document.createTextNode(str));
+    return div.innerHTML;
+  }
+
+  // ----- Add/Edit Modal -----
+  var modalOverlay = document.getElementById('modalOverlay');
+  var modalTitle = document.getElementById('modalTitle');
+  var modalName = document.getElementById('modalName');
+  var modalDisplay = document.getElementById('modalDisplay');
+  var modalCode = document.getElementById('modalCode');
+  var modalRole = document.getElementById('modalRole');
+  var modalError = document.getElementById('modalError');
+  var modalSave = document.getElementById('modalSave');
+  var modalCancel = document.getElementById('modalCancel');
+  var modalCloseBtn = document.getElementById('modalClose');
+
+  function openAddModal() {
+    editIndex = -1;
+    modalTitle.textContent = 'Add Staff Member';
+    modalName.value = '';
+    modalDisplay.value = '';
+    modalCode.value = '';
+    modalRole.value = 'Operator';
+    modalError.textContent = '';
+    modalSave.textContent = 'Add Member';
+    modalOverlay.classList.add('active');
+    modalName.focus();
+  }
+
+  function openEditModal(idx) {
+    editIndex = idx;
+    var s = STAFF[idx];
+    modalTitle.textContent = 'Edit Staff Member';
+    modalName.value = s.name;
+    modalDisplay.value = s.displayName;
+    modalCode.value = s.code;
+    modalRole.value = s.role || 'Operator';
+    modalError.textContent = '';
+    modalSave.textContent = 'Save Changes';
+    modalOverlay.classList.add('active');
+    modalName.focus();
+  }
+
+  function closeModal() {
+    modalOverlay.classList.remove('active');
+    editIndex = -1;
+  }
+
+  document.getElementById('btn-add-staff').addEventListener('click', openAddModal);
+  modalCancel.addEventListener('click', closeModal);
+  modalCloseBtn.addEventListener('click', closeModal);
+  modalOverlay.addEventListener('click', function(e) {
+    if (e.target === modalOverlay) closeModal();
+  });
+
+  modalSave.addEventListener('click', function() {
+    var name = modalName.value.trim();
+    var display = modalDisplay.value.trim();
+    var code = modalCode.value.trim();
+    var role = modalRole.value;
+
+    if (!name) { modalError.textContent = 'Full name is required.'; return; }
+    if (!display) { modalError.textContent = 'Display name is required.'; return; }
+    if (code.length !== 4 || !/^\d{4}$/.test(code)) { modalError.textContent = 'Code must be exactly 4 digits.'; return; }
+
+    // Check for duplicate code
+    for (var i = 0; i < STAFF.length; i++) {
+      if (STAFF[i].code === code && i !== editIndex) {
+        modalError.textContent = 'Code "' + code + '" is already taken by ' + STAFF[i].displayName + '.';
+        return;
+      }
+    }
+
+    if (editIndex >= 0) {
+      STAFF[editIndex].name = name;
+      STAFF[editIndex].displayName = display;
+      STAFF[editIndex].code = code;
+      STAFF[editIndex].role = role;
+    } else {
+      STAFF.push({ name: name, displayName: display, code: code, role: role });
+    }
+
+    saveStaff();
+    renderTeamTable();
+    closeModal();
+  });
+
+  // ----- Remove Modal -----
+  var removeOverlay = document.getElementById('removeOverlay');
+  var removeNameEl = document.getElementById('removeName');
+  var removeConfirm = document.getElementById('removeConfirm');
+  var removeCancelBtn = document.getElementById('removeCancel');
+  var removeCloseBtn = document.getElementById('removeClose');
+
+  function openRemoveModal(idx) {
+    removeIndex = idx;
+    removeNameEl.textContent = STAFF[idx].name + ' (' + STAFF[idx].displayName + ')';
+    removeOverlay.classList.add('active');
+  }
+
+  function closeRemoveModal() {
+    removeOverlay.classList.remove('active');
+    removeIndex = -1;
+  }
+
+  removeCancelBtn.addEventListener('click', closeRemoveModal);
+  removeCloseBtn.addEventListener('click', closeRemoveModal);
+  removeOverlay.addEventListener('click', function(e) {
+    if (e.target === removeOverlay) closeRemoveModal();
+  });
+
+  removeConfirm.addEventListener('click', function() {
+    if (removeIndex >= 0 && removeIndex < STAFF.length) {
+      STAFF.splice(removeIndex, 1);
+      saveStaff();
+      renderTeamTable();
+    }
+    closeRemoveModal();
+  });
 
 })();
 </script>
