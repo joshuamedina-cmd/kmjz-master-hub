@@ -1034,6 +1034,34 @@ body::before {
 }
 .yc-ro-btn[aria-checked="true"] .yc-ro-label { color: var(--accent); }
 
+/* RO + Yield % Row */
+.yc-ro-yield-flex {
+  display: flex;
+  align-items: flex-start;
+  gap: var(--space-5);
+}
+.yc-ro-col {
+  flex: 1;
+  min-width: 0;
+}
+.yc-yield-divider {
+  width: 1px;
+  align-self: stretch;
+  background: var(--border);
+  margin: var(--space-1) 0;
+}
+@media (max-width: 480px) {
+  .yc-ro-yield-flex {
+    flex-direction: column;
+    gap: var(--space-4);
+  }
+  .yc-yield-divider {
+    width: 100%;
+    height: 1px;
+    margin: 0;
+  }
+}
+
 /* Calculate Button */
 .yc-calc-btn {
   display: flex;
@@ -1572,13 +1600,26 @@ body::before {
             <span class="yc-input-unit">x 500 gal</span>
           </div>
         </div>
-        <div class="yc-input-card" style="grid-column:1/-1;">
-          <label class="yc-input-label">Reverse Osmosis</label>
-          <button id="yc-ro-toggle" class="yc-ro-btn" role="switch" aria-checked="false" aria-label="Toggle Reverse Osmosis">
-            <span class="yc-ro-track"><span class="yc-ro-thumb"></span></span>
-            <span class="yc-ro-label" id="yc-ro-label">OFF</span>
-          </button>
-          <p style="font-size:var(--text-xs);color:var(--text-muted);margin-top:var(--space-1);">Adds 30% to biomass kilos</p>
+        <div class="yc-input-card yc-ro-yield-row" style="grid-column:1/-1;">
+          <div class="yc-ro-yield-flex">
+            <div class="yc-ro-col">
+              <label class="yc-input-label">Reverse Osmosis</label>
+              <button id="yc-ro-toggle" class="yc-ro-btn" role="switch" aria-checked="false" aria-label="Toggle Reverse Osmosis">
+                <span class="yc-ro-track"><span class="yc-ro-thumb"></span></span>
+                <span class="yc-ro-label" id="yc-ro-label">OFF</span>
+              </button>
+              <p style="font-size:var(--text-xs);color:var(--text-muted);margin-top:var(--space-1);">Adds 30% to biomass kilos</p>
+            </div>
+            <div class="yc-yield-divider"></div>
+            <div class="yc-ro-col">
+              <label for="yc-yield-pct" class="yc-input-label">Crude Yield %</label>
+              <div class="yc-input-wrap">
+                <input type="number" id="yc-yield-pct" placeholder="4.8" min="0" max="100" step="0.1" autocomplete="off" value="4.8">
+                <span class="yc-input-unit">%</span>
+              </div>
+              <p style="font-size:var(--text-xs);color:var(--text-muted);margin-top:var(--space-1);">Default 4.8%</p>
+            </div>
+          </div>
         </div>
       </div>
       <button id="yc-calc-btn" class="yc-calc-btn">
@@ -1597,7 +1638,7 @@ body::before {
           <span class="yc-result-unit">kilos</span>
         </div>
         <div class="yc-result-card">
-          <span class="yc-result-label">Final Product (4.8%)</span>
+          <span class="yc-result-label">Final Product (<span id="yc-final-pct-label">4.8</span>%)</span>
           <span id="yc-final-val" class="yc-result-value">&mdash;</span>
           <span class="yc-result-unit">kilos</span>
         </div>
@@ -2260,8 +2301,14 @@ body::before {
 
       // 201 kilos per batch, +30% if RO
       var biomassKilos = batchCount * 201 * (ycRoEnabled ? 1.3 : 1);
-      // 4.8% of crude grams, converted to kilos
-      var finalKilos = (crudeGrams * 0.048) / 1000;
+      // Yield % of crude grams, converted to kilos (default 4.8%)
+      var yieldPctInput = document.getElementById('yc-yield-pct');
+      var yieldPct = parseFloat(yieldPctInput.value);
+      if (isNaN(yieldPct) || yieldPct <= 0) yieldPct = 4.8;
+      var finalKilos = (crudeGrams * (yieldPct / 100)) / 1000;
+      // Update result label to reflect actual yield %
+      var pctLabel = document.getElementById('yc-final-pct-label');
+      if (pctLabel) pctLabel.textContent = yieldPct;
       // Ratio
       var ratio = finalKilos > 0 ? biomassKilos / finalKilos : 0;
 
