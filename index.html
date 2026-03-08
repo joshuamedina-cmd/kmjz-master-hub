@@ -89,7 +89,7 @@ body::before {
 
 /* ========== SCREEN MANAGEMENT ========== */
 .screen { display: none; position: relative; z-index: 1; min-height: 100vh; }
-.screen.active { display: flex; }
+.screen.active { display: flex; overflow-y: auto; max-height: 100vh; }
 
 /* ========== LOGIN SCREEN ========== */
 .login-screen {
@@ -344,7 +344,7 @@ body::before {
 }
 
 /* ========== SECTION SCREENS ========== */
-.section-screen { flex-direction: column; }
+.section-screen { flex-direction: column; overflow-y: auto; -webkit-overflow-scrolling: touch; }
 .section-header {
   display: flex;
   align-items: center;
@@ -680,10 +680,14 @@ body::before {
   .section-body { padding: var(--space-4); }
   .supply-grid { grid-template-columns: 1fr; gap: var(--space-3); }
   .link-grid { grid-template-columns: 1fr; gap: var(--space-3); }
-  .process-flow { flex-direction: column; align-items: stretch; }
+  .process-flow { flex-direction: column; align-items: stretch; overflow-x: visible; overflow-y: visible; padding-bottom: var(--space-8); }
   .process-step { flex-direction: column; }
-  .process-card { min-width: unset; width: 100%; }
-  .process-arrow { transform: rotate(90deg); padding: var(--space-1) 0; justify-content: center; }
+  .process-card { min-width: unset; width: 100%; padding: var(--space-4); }
+  .process-card__step { width: 28px; height: 28px; font-size: 0.7rem; }
+  .process-card__name { font-size: var(--text-sm); }
+  .process-card__desc { font-size: 0.7rem; }
+  .process-arrow { transform: rotate(90deg); padding: 2px 0; justify-content: center; }
+  .process-arrow svg { width: 20px; height: 20px; }
   .supply-card__value { font-size: var(--text-xl); }
   .hub-greeting { display: none; }
   .hub-header-right { gap: var(--space-2); }
