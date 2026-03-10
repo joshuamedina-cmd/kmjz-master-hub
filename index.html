@@ -1793,16 +1793,26 @@ body::before {
 
   // ===== STAFF DATA — persistent storage backed =====
   var DEFAULT_STAFF = [
-    { name: "Bobby Fleming",     displayName: "Bobby",    code: "5150", role: "Admin" },
-    { name: "James Laker",       displayName: "Laker",    code: "0419", role: "Operator" },
-    { name: "Q Old School",      displayName: "Q",        code: "0420", role: "Operator" },
-    { name: "Jorge Mendoza",     displayName: "George",   code: "4093", role: "Operator" },
-    { name: "Jaime Popes",       displayName: "Jaime",    code: "2008", role: "Operator" },
-    { name: "Cris",              displayName: "Cris",     code: "8818", role: "Operator" },
-    { name: "Fernando Lab New",  displayName: "FernDawg", code: "7117", role: "Admin" },
-    { name: "Kevin Doud",        displayName: "KD",       code: "0001", role: "Admin" },
-    { name: "Moe Mohammed",      displayName: "Moh",      code: "1234", role: "Operator" },
-    { name: "Zee Aktar",         displayName: "Zee",      code: "4444", role: "Operator" }
+    { name: "Joshua Medina",        displayName: "Josh",      code: "4821", role: "Admin" },
+    { name: "Q Old School",         displayName: "Q",         code: "0420", role: "Operator" },
+    { name: "Jaime DeLuna",         displayName: "Jaime D",   code: "3176", role: "Operator" },
+    { name: "Jorge Mendoza",        displayName: "George",    code: "4093", role: "Operator" },
+    { name: "Bobby Fleming",        displayName: "Bobby",     code: "5150", role: "Admin" },
+    { name: "Jaime Popes",          displayName: "Jaime P",   code: "2008", role: "Operator" },
+    { name: "Silvestre G",          displayName: "Sly",       code: "6239", role: "Operator" },
+    { name: "Zee Aktar",            displayName: "Zee",       code: "4444", role: "Operator" },
+    { name: "Dylan Stensland",      displayName: "Dylan S",   code: "7582", role: "Operator" },
+    { name: "JDub",                 displayName: "JDub",      code: "9034", role: "Operator" },
+    { name: "Cris",                 displayName: "Cris",      code: "8818", role: "Operator" },
+    { name: "Arturo Vbx Labs",      displayName: "Arturo",    code: "5463", role: "Operator" },
+    { name: "Eli Green King",       displayName: "Eli",       code: "3847", role: "Operator" },
+    { name: "James Laker",          displayName: "Laker",     code: "0419", role: "Operator" },
+    { name: "Dylan",                displayName: "Dylan",     code: "1653", role: "Operator" },
+    { name: "Fernando Lab New",     displayName: "FernDawg",  code: "7117", role: "Admin" },
+    { name: "Kevin Doud",           displayName: "KD",        code: "0001", role: "Admin" },
+    { name: "Moe Mohammed",         displayName: "Moh",       code: "1234", role: "Operator" },
+    { name: "Quentin M.",           displayName: "Quentin",   code: "2691", role: "Operator" },
+    { name: "George Tron",          displayName: "George T",  code: "8305", role: "Operator" }
   ];
 
   // Storage helper — persists on Vercel via browser storage, falls back to in-memory
@@ -1819,6 +1829,16 @@ body::before {
     if (_hasLS && _ls) { try { _ls.setItem(key, val); } catch(e) { /* */ } }
     _storage[key] = val;
   }
+
+  // Version bump — clears old cached staff so new DEFAULT_STAFF takes effect
+  var STAFF_VERSION = '2026-03-10';
+  try {
+    var savedVer = storageGet('kmjz_staff_version');
+    if (savedVer !== STAFF_VERSION) {
+      storageSet('kmjz_staff', '');
+      storageSet('kmjz_staff_version', STAFF_VERSION);
+    }
+  } catch(e) { /* ignore */ }
 
   function loadStaff() {
     try {
