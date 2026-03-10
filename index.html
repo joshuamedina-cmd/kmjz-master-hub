@@ -1915,7 +1915,12 @@ body::before {
       adminEls[a].style.display = isAdmin ? '' : 'none';
     }
 
-    showScreen('screen-hub');
+    // Route based on role: operators go straight to checkpoints, admins go to hub
+    if (user.role === 'Operator') {
+      showScreen('screen-checkpoints');
+    } else {
+      showScreen('screen-hub');
+    }
   });
 
   loginCode.focus();
