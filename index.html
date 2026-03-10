@@ -1791,6 +1791,13 @@ body::before {
 (function() {
   'use strict';
 
+  // ===== DISABLE BROWSER BACK BUTTON =====
+  // Prevents operators from navigating away from the app on tablets
+  history.pushState(null, '', location.href);
+  window.addEventListener('popstate', function() {
+    history.pushState(null, '', location.href);
+  });
+
   // ===== STAFF DATA — persistent storage backed =====
   var DEFAULT_STAFF = [
     { name: "Joshua Medina",        displayName: "Josh",      code: "4821", role: "Admin" },
