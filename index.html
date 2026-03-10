@@ -496,6 +496,38 @@ body::before {
   50% { box-shadow: 0 4px 24px rgba(0,0,0,0.08), 0 0 30px rgba(255,152,0,0.5), 0 0 60px rgba(255,152,0,0.25); }
 }
 
+/* ========== TOAST NOTIFICATIONS ========== */
+.toast-container {
+  position: fixed;
+  top: var(--space-4);
+  right: var(--space-4);
+  z-index: 10000;
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+  pointer-events: none;
+}
+.toast {
+  pointer-events: auto;
+  padding: var(--space-3) var(--space-4);
+  border-radius: var(--radius);
+  color: #fff;
+  font-size: var(--text-sm);
+  font-weight: 600;
+  box-shadow: 0 4px 20px rgba(0,0,0,0.2);
+  opacity: 0;
+  transform: translateX(100%);
+  transition: all 0.4s cubic-bezier(0.22, 1, 0.36, 1);
+  max-width: 340px;
+}
+.toast--visible {
+  opacity: 1;
+  transform: translateX(0);
+}
+.toast--success { background: var(--green); }
+.toast--warning { background: var(--orange); }
+.toast--error { background: var(--red); }
+
 /* ========== LINK CARDS GRID ========== */
 .link-grid {
   display: grid;
@@ -1234,6 +1266,9 @@ body::before {
 </head>
 <body>
 
+<!-- Toast notification container -->
+<div class="toast-container" id="toastContainer"></div>
+
 <!-- ============================================================ -->
 <!-- SCREEN 1: LOGIN                                                -->
 <!-- ============================================================ -->
@@ -1373,6 +1408,13 @@ body::before {
         <div class="supply-card__value" id="val-biomass"><span class="shimmer" style="display:inline-block;width:80px;height:36px;"></span></div>
         <div class="supply-card__status supply-card__status--ok" id="status-biomass">OK</div>
         <div class="supply-card__threshold">Threshold: 5,000 kg</div>
+      </div>
+      <div class="supply-card" id="supply-salt_bags">
+        <span class="supply-card__alert-badge" id="alert-badge-salt_bags">Alert sent!</span>
+        <div class="supply-card__name">Salt Bags</div>
+        <div class="supply-card__value" id="val-salt_bags"><span class="shimmer" style="display:inline-block;width:80px;height:36px;"></span></div>
+        <div class="supply-card__status supply-card__status--ok" id="status-salt_bags">OK</div>
+        <div class="supply-card__threshold">Threshold: 50 bags</div>
       </div>
     </div>
   </div>
@@ -1943,7 +1985,8 @@ body::before {
     soda_ash:         { groupId: 'group_mm17ansz', column: 'numeric_mm17bhbw', threshold: 10,   unit: 'bags', multiplier: 1,  alertMsg: 'We are low and NEED SODA ASH' },
     sodium_hydroxide: { groupId: 'group_mm17rn98', column: 'numeric_mm17bhbw', threshold: 10,   unit: 'bags', multiplier: 1,  alertMsg: 'We are low and NEED SODIUM HYDROXIDE' },
     citric_acid:      { groupId: 'group_mm17brcp', column: 'numeric_mm17bhbw', threshold: 20,   unit: 'bags', multiplier: 1,  alertMsg: 'We are low and NEED CITRIC ACID' },
-    biomass:          { groupId: 'topics',          column: 'numeric_mm16yt4m', threshold: 5000, unit: 'kg',   multiplier: 25, alertMsg: 'We are low and NEED BIOMASS' }
+    biomass:          { groupId: 'topics',          column: 'numeric_mm16yt4m', threshold: 5000, unit: 'kg',   multiplier: 25, alertMsg: 'We are low and NEED BIOMASS' },
+    salt_bags:        { groupId: 'group_salt_bags',  column: 'numeric_mm17bhbw', threshold: 50,   unit: 'bags', multiplier: 1,  alertMsg: 'We are low and NEED SALT BAGS' }
   };
 
   var ALL_USERS = [
@@ -2094,6 +2137,164 @@ body::before {
 
   // Refresh supply data every 5 minutes regardless of screen
   setInterval(fetchSupplyData, 300000);
+
+  // ===== TOAST NOTIFICATIONS =====
+  function showToast(message, type, duration) {
+    type = type || 'success';
+    duration = duration || 4000;
+    var container = document.getElementById('toastContainer');
+    var toast = document.createElement('div');
+    toast.className = 'toast toast--' + type;
+    toast.textContent = message;
+    container.appendChild(toast);
+    requestAnimationFrame(function() {
+      requestAnimationFrame(function() {
+        toast.classList.add('toast--visible');
+      });
+    });
+    setTimeout(function() {
+      toast.classList.remove('toast--visible');
+      setTimeout(function() { toast.remove(); }, 400);
+    }, duration);
+  }
+
+  // ===== SALT BAGS — ENSURE ITEM EXISTS ON MONDAY.COM =====
+  var SALT_BAGS_BOARD_ID = 18402880277;
+  var SALT_BAGS_GROUP_ID = 'group_salt_bags';
+  var SALT_BAGS_COLUMN_ID = 'numeric_mm17bhbw';
+  var saltBagsItemId = null;
+  var saltBagsCurrentQty = null;
+
+  function ensureSaltBagsItem() {
+    // First, check if "Salt Bags" item already exists on the board
+    var searchQuery = '{ boards (ids: ' + SALT_BAGS_BOARD_ID + ') { items_page (limit: 500) { items { id name group { id } column_values (ids: ["' + SALT_BAGS_COLUMN_ID + '"]) { id text } } } } }';
+    return fetch('https://api.monday.com/v2', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json', 'Authorization': MONDAY_API_KEY },
+      body: JSON.stringify({ query: searchQuery })
+    })
+    .then(function(res) { return res.json(); })
+    .then(function(data) {
+      if (data && data.data && data.data.boards && data.data.boards[0]) {
+        var items = data.data.boards[0].items_page.items;
+        for (var i = 0; i < items.length; i++) {
+          if (items[i].name.toLowerCase().indexOf('salt bag') !== -1) {
+            saltBagsItemId = items[i].id;
+            // Read current quantity
+            for (var j = 0; j < items[i].column_values.length; j++) {
+              if (items[i].column_values[j].id === SALT_BAGS_COLUMN_ID) {
+                saltBagsCurrentQty = parseFloat(items[i].column_values[j].text) || 0;
+              }
+            }
+            console.log('Salt Bags item found: ID=' + saltBagsItemId + ', qty=' + saltBagsCurrentQty);
+            return;
+          }
+        }
+      }
+      // Item not found — create it
+      console.log('Salt Bags item not found, creating...');
+      var createMutation = 'mutation { create_item (board_id: ' + SALT_BAGS_BOARD_ID + ', group_id: "' + SALT_BAGS_GROUP_ID + '", item_name: "Salt Bags") { id } }';
+      return fetch('https://api.monday.com/v2', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json', 'Authorization': MONDAY_API_KEY },
+        body: JSON.stringify({ query: createMutation })
+      })
+      .then(function(res) { return res.json(); })
+      .then(function(createData) {
+        if (createData && createData.data && createData.data.create_item) {
+          saltBagsItemId = createData.data.create_item.id;
+          saltBagsCurrentQty = 0;
+          console.log('Salt Bags item created: ID=' + saltBagsItemId);
+        } else {
+          console.error('Failed to create Salt Bags item:', createData);
+        }
+      });
+    })
+    .catch(function(err) {
+      console.error('Error ensuring Salt Bags item:', err);
+    });
+  }
+
+  // Run on startup
+  ensureSaltBagsItem();
+
+  // ===== BASIFY & FLOCC — AUTO-DEDUCT 25 SALT BAGS =====
+  var BATCH_BOARD_ID = 18402821844;
+  var BASIFY_GROUP_ID = 'group_mm16wch5';
+  var SALT_DEDUCT_AMOUNT = 25;
+
+  function deductSaltBags() {
+    if (!saltBagsItemId) {
+      showToast('Salt Bags item not found — cannot deduct', 'error');
+      return;
+    }
+
+    // Fetch current quantity first to get the latest value
+    var fetchQuery = '{ items (ids: [' + saltBagsItemId + ']) { column_values (ids: ["' + SALT_BAGS_COLUMN_ID + '"]) { id text } } }';
+    fetch('https://api.monday.com/v2', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json', 'Authorization': MONDAY_API_KEY },
+      body: JSON.stringify({ query: fetchQuery })
+    })
+    .then(function(res) { return res.json(); })
+    .then(function(data) {
+      var currentQty = 0;
+      if (data && data.data && data.data.items && data.data.items[0]) {
+        var cols = data.data.items[0].column_values;
+        for (var i = 0; i < cols.length; i++) {
+          if (cols[i].id === SALT_BAGS_COLUMN_ID) {
+            currentQty = parseFloat(cols[i].text) || 0;
+          }
+        }
+      }
+
+      var newQty = Math.max(0, currentQty - SALT_DEDUCT_AMOUNT);
+      var remaining = newQty;
+
+      // Update the column value on Monday.com
+      var colObj = {};
+      colObj[SALT_BAGS_COLUMN_ID] = newQty.toString();
+      var colValues = JSON.stringify(JSON.stringify(colObj));
+      var updateMutation = 'mutation { change_multiple_column_values (item_id: ' + saltBagsItemId + ', board_id: ' + SALT_BAGS_BOARD_ID + ', column_values: ' + colValues + ') { id } }';
+
+      return fetch('https://api.monday.com/v2', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json', 'Authorization': MONDAY_API_KEY },
+        body: JSON.stringify({ query: updateMutation })
+      })
+      .then(function(res) { return res.json(); })
+      .then(function(updateData) {
+        if (updateData && updateData.data && updateData.data.change_multiple_column_values) {
+          saltBagsCurrentQty = remaining;
+          showToast('25 Salt Bags deducted — ' + remaining + ' remaining', 'success');
+
+          // Check threshold warning
+          if (remaining < SUPPLIES.salt_bags.threshold) {
+            showToast('WARNING: Salt Bags below threshold (' + remaining + ' < ' + SUPPLIES.salt_bags.threshold + ')', 'warning', 6000);
+          }
+
+          // Refresh the supply display
+          fetchSupplyData();
+        } else {
+          console.error('Failed to update Salt Bags quantity:', updateData);
+          showToast('Failed to deduct Salt Bags — API error', 'error');
+        }
+      });
+    })
+    .catch(function(err) {
+      console.error('Salt Bags deduction error:', err);
+      showToast('Failed to deduct Salt Bags — network error', 'error');
+    });
+  }
+
+  // Intercept Basify checkpoint link clicks to trigger salt bag deduction
+  document.addEventListener('click', function(e) {
+    var link = e.target.closest('a[href*="basify-checkpoint"]');
+    if (link) {
+      deductSaltBags();
+      // Allow the link to open normally (it's target="_blank")
+    }
+  });
 
   // ===== TEAM MANAGEMENT =====
   var AVATAR_COLORS = ['#1565C0','#388E3C','#7C4DFF','#E65100','#c62828','#00838F','#6A1B9A','#AD1457','#2E7D32','#F57F17'];
