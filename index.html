@@ -3806,6 +3806,8 @@ body::before {
 
     saveStaff();
     renderTeamTable();
+    // Refresh refinement operator dropdowns so the new/edited person is available immediately
+    if (typeof populateOperatorDropdowns === 'function') populateOperatorDropdowns();
     closeModal();
   });
 
@@ -3838,6 +3840,8 @@ body::before {
       STAFF.splice(removeIndex, 1);
       saveStaff();
       renderTeamTable();
+      // Refresh refinement operator dropdowns so the removed person is gone
+      if (typeof populateOperatorDropdowns === 'function') populateOperatorDropdowns();
     }
     closeRemoveModal();
   });
@@ -4059,6 +4063,9 @@ body::before {
     if (id === 'screen-receiving') { renderReceivingLog(); }
   };
 
+  // Expose STAFF globally so refinement dropdowns can pull from the same list
+  window.STAFF = STAFF;
+
 })();
 </script>
 
@@ -4073,7 +4080,11 @@ body::before {
    ========================================================== */
 
 // ===== CONSTANTS =====
-const OPERATORS = ['Quinton L', 'Jaime R', 'James L', 'Jaime D', 'J.D.', 'Sly', 'Moh', 'Joshua', 'Kevin D'];
+// OPERATORS is now dynamically derived from the STAFF array (managed via Team Management)
+// so any person admin adds is immediately available in all dropdowns
+function getOperatorNames() {
+  return STAFF.map(function(s) { return s.displayName; });
+}
 const STAGES = ['Soak', 'Pinnacle', 'Rotovap', 'Ovens', 'Prep & Weigh'];
 const STAGE_BADGES = ['badge-soak', 'badge-pinnacle', 'badge-rotovap', 'badge-ovens', 'badge-prepweigh'];
 const STAGE_DESCS = [
@@ -4160,18 +4171,28 @@ function loadState() {
 }
 
 // ===== POPULATE OPERATOR DROPDOWNS =====
+// Rebuilds all operator dropdowns from the current STAFF list.
+// Called on init and whenever staff is added/edited/removed.
 function populateOperatorDropdowns() {
   const ids = ['refLoginOperator','soakOperator','pinnacleOperator','rotovapOperator','ovenOperator','finalOperator'];
+  const operators = getOperatorNames();
   ids.forEach(id => {
     const sel = document.getElementById(id);
     if (!sel) return;
-    if (sel.options.length <= 1) {
-      OPERATORS.forEach(op => {
-        const opt = document.createElement('option');
-        opt.value = op;
-        opt.textContent = op;
-        sel.appendChild(opt);
-      });
+    // Remember current selection so we can restore it
+    const prev = sel.value;
+    // Clear all options except the first placeholder
+    while (sel.options.length > 1) { sel.removeChild(sel.lastChild); }
+    // Rebuild from current STAFF
+    operators.forEach(op => {
+      const opt = document.createElement('option');
+      opt.value = op;
+      opt.textContent = op;
+      sel.appendChild(opt);
+    });
+    // Restore previous selection if still valid
+    if (prev && operators.indexOf(prev) !== -1) {
+      sel.value = prev;
     }
   });
 }
