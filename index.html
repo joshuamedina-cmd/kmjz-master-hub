@@ -2175,8 +2175,8 @@ body::before {
     sodium_hydroxide: { groupId: 'group_mm17rn98', column: 'numeric_mm17bhbw', threshold: 10,   unit: 'bags', multiplier: 1,  alertMsg: 'We are low and NEED SODIUM HYDROXIDE' },
     citric_acid:      { groupId: 'group_mm17brcp', column: 'numeric_mm17bhbw', threshold: 20,   unit: 'bags', multiplier: 1,  alertMsg: 'We are low and NEED CITRIC ACID' },
     biomass:          { groupId: 'topics',          column: 'numeric_mm16yt4m', threshold: 5000, unit: 'kg',   multiplier: 25, alertMsg: 'We are low and NEED BIOMASS' },
-    salt_bags:        { groupId: 'group_salt_bags',        column: 'numeric_mm17bhbw', threshold: 50,   unit: 'bags',    multiplier: 1,  alertMsg: 'We are low and NEED SALT BAGS' },
-    acetone_barrels:  { groupId: 'group_acetone_barrels',   column: 'numeric_mm17bhbw', threshold: 5,    unit: 'barrels', multiplier: 1,  alertMsg: 'We are low and NEED ACETONE BARRELS' }
+    salt_bags:        { groupId: 'group_mm1akxyb',        column: 'numeric_mm17bhbw', threshold: 50,   unit: 'bags',    multiplier: 1,  alertMsg: 'We are low and NEED SALT BAGS' },
+    acetone_barrels:  { groupId: 'group_mm1bkwdd',   column: 'numeric_mm1bacfw', threshold: 5,    unit: 'barrels', multiplier: 1,  alertMsg: 'We are low and NEED ACETONE BARRELS' }
   };
 
   var ALL_USERS = [
@@ -2537,7 +2537,7 @@ body::before {
 
   // ===== SALT BAGS — ENSURE ITEM EXISTS ON MONDAY.COM =====
   var SALT_BAGS_BOARD_ID = 18402880277;
-  var SALT_BAGS_GROUP_ID = 'group_salt_bags';
+  var SALT_BAGS_GROUP_ID = 'group_mm1akxyb';
   var SALT_BAGS_COLUMN_ID = 'numeric_mm17bhbw';
   var saltBagsItemId = null;
   var saltBagsCurrentQty = null;
