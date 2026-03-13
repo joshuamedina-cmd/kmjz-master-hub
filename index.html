@@ -3015,7 +3015,16 @@ body::before {
 (function() {
   'use strict';
 
-  // ===== STAFF DATA — persistent storage backed =====
+  // ===== STAFF DATA — Monday.com backed (shared across all devices) =====
+  var STAFF_BOARD_ID = 18403884599;
+  var STAFF_COL_DISPLAY = 'text_mm1dg9hv';
+  var STAFF_COL_CODE    = 'text_mm1d8mqh';
+  var STAFF_COL_ROLE    = 'text_mm1dwfwh';
+  var STAFF_API_URL     = 'https://api.monday.com/v2';
+  // Uses the same Monday token already in the app
+  var STAFF_API_KEY     = 'eyJhbGciOiJIUzI1NiJ9.eyJ0aWQiOjYyNzA3NzcxOSwiYWFpIjoxMSwidWlkIjo3NTA2NTY3OCwiaWFkIjoiMjAyNi0wMi0yOFQwMToxNzowOS4wMDBaIiwicGVyIjoibWU6d3JpdGUiLCJhY3RpZCI6MjkxNDg2NzMsInJnbiI6InVzZTEifQ.ocD9w0Q-17JqNfU4iZXL4i3frn_Bw4pyVe_fkhJuiPg';
+
+  // Fallback in case Monday.com is unreachable
   var DEFAULT_STAFF = [
     { name: "Bobby Fleming",     displayName: "Bobby",    code: "5150", role: "Admin" },
     { name: "James Laker",       displayName: "Laker",    code: "0419", role: "Operator" },
@@ -3029,7 +3038,7 @@ body::before {
     { name: "Zee Aktar",         displayName: "Zee",      code: "4444", role: "Operator" }
   ];
 
-  // Storage helper — persists on Vercel via browser storage, falls back to in-memory
+  // localStorage helper (still used for caching & non-staff things)
   var _storage = {};
   var _ls = null;
   var _hasLS = false;
@@ -3044,19 +3053,113 @@ body::before {
     _storage[key] = val;
   }
 
-  function loadStaff() {
-    try {
-      var saved = storageGet('kmjz_staff');
-      if (saved) return JSON.parse(saved);
-    } catch(e) { /* ignore */ }
-    return DEFAULT_STAFF.slice();
+  // ----- Monday.com GraphQL helper -----
+  function mondayStaffQuery(query) {
+    return fetch(STAFF_API_URL, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json', 'Authorization': STAFF_API_KEY },
+      body: JSON.stringify({ query: query })
+    }).then(function(r) { return r.json(); });
   }
+
+  // ----- Load staff from Monday.com -----
+  function fetchStaffFromMonday() {
+    var q = '{ boards(ids: ' + STAFF_BOARD_ID + ') { items_page(limit: 200) { items { id name column_values { id text } } } } }';
+    return mondayStaffQuery(q).then(function(res) {
+      var items = res.data.boards[0].items_page.items;
+      var list = [];
+      for (var i = 0; i < items.length; i++) {
+        var item = items[i];
+        var obj = { name: item.name, mondayId: item.id, displayName: '', code: '', role: 'Operator' };
+        for (var c = 0; c < item.column_values.length; c++) {
+          var cv = item.column_values[c];
+          if (cv.id === STAFF_COL_DISPLAY) obj.displayName = cv.text || '';
+          if (cv.id === STAFF_COL_CODE)    obj.code = cv.text || '';
+          if (cv.id === STAFF_COL_ROLE)    obj.role = cv.text || 'Operator';
+        }
+        // Skip items with no code (incomplete entries)
+        if (obj.code && obj.displayName) list.push(obj);
+      }
+      return list;
+    });
+  }
+
+  // ----- Create staff item on Monday.com -----
+  function createStaffOnMonday(staffObj) {
+    var cols = JSON.stringify({
+      "text_mm1dg9hv": staffObj.displayName,
+      "text_mm1d8mqh": staffObj.code,
+      "text_mm1dwfwh": staffObj.role
+    }).replace(/\\/g, '\\\\').replace(/"/g, '\\"');
+    var q = 'mutation { create_item(board_id: ' + STAFF_BOARD_ID + ', item_name: "' + staffObj.name.replace(/"/g, '\\"') + '", column_values: "' + cols + '") { id } }';
+    return mondayStaffQuery(q).then(function(res) {
+      if (res.data && res.data.create_item) {
+        return res.data.create_item.id;
+      }
+      return null;
+    });
+  }
+
+  // ----- Update staff item on Monday.com -----
+  function updateStaffOnMonday(mondayId, staffObj) {
+    var cols = JSON.stringify({
+      "text_mm1dg9hv": staffObj.displayName,
+      "text_mm1d8mqh": staffObj.code,
+      "text_mm1dwfwh": staffObj.role
+    }).replace(/\\/g, '\\\\').replace(/"/g, '\\"');
+    var q = 'mutation { change_multiple_column_values(item_id: ' + mondayId + ', board_id: ' + STAFF_BOARD_ID + ', column_values: "' + cols + '") { id } }';
+    return mondayStaffQuery(q).then(function(res) {
+      // Also update the item name
+      var q2 = 'mutation { change_simple_column_value(item_id: ' + mondayId + ', board_id: ' + STAFF_BOARD_ID + ', column_id: "name", value: "' + staffObj.name.replace(/"/g, '\\"') + '") { id } }';
+      return mondayStaffQuery(q2);
+    });
+  }
+
+  // ----- Delete staff item from Monday.com -----
+  function deleteStaffOnMonday(mondayId) {
+    var q = 'mutation { delete_item(item_id: ' + mondayId + ') { id } }';
+    return mondayStaffQuery(q);
+  }
+
+  // ----- saveStaff: also caches to localStorage -----
   function saveStaff() {
     try { storageSet('kmjz_staff', JSON.stringify(STAFF)); } catch(e) { /* ignore */ }
   }
 
-  var STAFF = loadStaff();
+  // Start with DEFAULT_STAFF immediately (so login works while Monday loads)
+  var STAFF = DEFAULT_STAFF.slice();
   var currentUser = null;
+  var staffLoaded = false;
+
+  // Fetch live staff from Monday.com and replace
+  fetchStaffFromMonday().then(function(list) {
+    if (list && list.length > 0) {
+      STAFF.length = 0;
+      for (var i = 0; i < list.length; i++) STAFF.push(list[i]);
+      saveStaff();
+      staffLoaded = true;
+      // Update global ref and refresh UI
+      window.STAFF = STAFF;
+      if (typeof populateOperatorDropdowns === 'function') populateOperatorDropdowns();
+      if (typeof renderTeamTable === 'function') renderTeamTable();
+    }
+  }).catch(function(err) {
+    console.warn('Monday.com staff fetch failed, using fallback:', err);
+    // Try localStorage cache as second fallback
+    try {
+      var saved = storageGet('kmjz_staff');
+      if (saved) {
+        var parsed = JSON.parse(saved);
+        if (parsed && parsed.length > 0) {
+          STAFF.length = 0;
+          for (var i = 0; i < parsed.length; i++) STAFF.push(parsed[i]);
+          window.STAFF = STAFF;
+          if (typeof populateOperatorDropdowns === 'function') populateOperatorDropdowns();
+          if (typeof renderTeamTable === 'function') renderTeamTable();
+        }
+      }
+    } catch(e) { /* ignore */ }
+  });
 
   // ===== SCREEN NAVIGATION =====
   function showScreen(id) {
@@ -3796,17 +3899,33 @@ body::before {
     }
 
     if (editIndex >= 0) {
+      // ----- EDIT existing staff member -----
       STAFF[editIndex].name = name;
       STAFF[editIndex].displayName = display;
       STAFF[editIndex].code = code;
       STAFF[editIndex].role = role;
+      // Sync edit to Monday.com
+      if (STAFF[editIndex].mondayId) {
+        updateStaffOnMonday(STAFF[editIndex].mondayId, STAFF[editIndex]).catch(function(e) { console.warn('Monday sync failed:', e); });
+      }
     } else {
-      STAFF.push({ name: name, displayName: display, code: code, role: role });
+      // ----- ADD new staff member -----
+      var newMember = { name: name, displayName: display, code: code, role: role, mondayId: null };
+      STAFF.push(newMember);
+      var newIdx = STAFF.length - 1;
+      // Create on Monday.com and store the returned item ID
+      createStaffOnMonday(newMember).then(function(id) {
+        if (id) {
+          STAFF[newIdx].mondayId = id;
+          saveStaff();
+        }
+      }).catch(function(e) { console.warn('Monday create failed:', e); });
     }
 
     saveStaff();
     renderTeamTable();
     // Refresh refinement operator dropdowns so the new/edited person is available immediately
+    window.STAFF = STAFF;
     if (typeof populateOperatorDropdowns === 'function') populateOperatorDropdowns();
     closeModal();
   });
@@ -3837,10 +3956,16 @@ body::before {
 
   removeConfirm.addEventListener('click', function() {
     if (removeIndex >= 0 && removeIndex < STAFF.length) {
+      var removed = STAFF[removeIndex];
       STAFF.splice(removeIndex, 1);
+      // Delete from Monday.com
+      if (removed.mondayId) {
+        deleteStaffOnMonday(removed.mondayId).catch(function(e) { console.warn('Monday delete failed:', e); });
+      }
       saveStaff();
       renderTeamTable();
       // Refresh refinement operator dropdowns so the removed person is gone
+      window.STAFF = STAFF;
       if (typeof populateOperatorDropdowns === 'function') populateOperatorDropdowns();
     }
     closeRemoveModal();
