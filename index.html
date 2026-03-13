@@ -266,24 +266,34 @@ body::before {
   padding: var(--space-8);
 }
 .hub-grid {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-6);
+  max-width: 780px;
+  width: 100%;
+}
+.hub-grid__top {
   display: grid;
   grid-template-columns: repeat(2, 1fr);
   gap: var(--space-6);
-  max-width: 680px;
-  width: 100%;
+}
+.hub-grid__bottom {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: var(--space-4);
 }
 .hub-btn {
   display: flex;
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  gap: var(--space-4);
+  gap: var(--space-3);
   background: var(--card-bg);
   backdrop-filter: blur(12px);
   -webkit-backdrop-filter: blur(12px);
   border: 2px solid var(--border);
   border-radius: var(--radius);
-  padding: var(--space-10) var(--space-6);
+  padding: var(--space-6) var(--space-4);
   text-decoration: none;
   color: inherit;
   box-shadow: var(--shadow);
@@ -291,7 +301,35 @@ body::before {
   transition: transform var(--transition-interactive), box-shadow var(--transition-interactive), border-color var(--transition-interactive);
   position: relative;
   overflow: hidden;
-  min-height: 200px;
+  min-height: 120px;
+}
+
+/* Large hero buttons (Crude Production & Refinement) */
+.hub-btn--hero {
+  min-height: 220px;
+  padding: var(--space-10) var(--space-6);
+  gap: var(--space-4);
+}
+.hub-btn--hero .hub-btn__icon {
+  width: 64px;
+  height: 64px;
+}
+.hub-btn--hero .hub-btn__label {
+  font-size: var(--text-xl);
+}
+.hub-btn--hero .hub-btn__desc {
+  font-size: var(--text-sm);
+}
+
+/* Glowing green pulse for hero buttons */
+@keyframes greenPulse {
+  0% { box-shadow: 0 0 0 0 rgba(76, 175, 80, 0.5); }
+  70% { box-shadow: 0 0 0 12px rgba(76, 175, 80, 0); }
+  100% { box-shadow: 0 0 0 0 rgba(76, 175, 80, 0); }
+}
+.hub-btn--hero {
+  border-color: var(--green);
+  animation: greenPulse 2s infinite;
 }
 .hub-btn::before {
   content: '';
@@ -311,12 +349,14 @@ body::before {
 .hub-btn--supplies:hover { border-color: var(--green); }
 .hub-btn--production::before { background: var(--accent-dark); }
 .hub-btn--production:hover { border-color: var(--accent-dark); }
-.hub-btn--checkpoints::before { background: var(--orange); }
-.hub-btn--checkpoints:hover { border-color: var(--orange); }
+.hub-btn--checkpoints::before { background: var(--green); }
+.hub-btn--checkpoints:hover { border-color: var(--green); }
 .hub-btn--tools::before { background: #7C4DFF; }
 .hub-btn--tools:hover { border-color: #7C4DFF; }
-.hub-btn--refinement::before { background: #E91E63; }
-.hub-btn--refinement:hover { border-color: #E91E63; }
+.hub-btn--refinement::before { background: var(--green); }
+.hub-btn--refinement:hover { border-color: var(--green); }
+.hub-btn--receiving::before { background: #00ACC1; }
+.hub-btn--receiving:hover { border-color: #00ACC1; }
 
 .hub-btn__icon {
   width: 56px;
@@ -328,9 +368,10 @@ body::before {
 }
 .hub-btn--supplies .hub-btn__icon { background: rgba(76,175,80,0.1); color: var(--green-dark); }
 .hub-btn--production .hub-btn__icon { background: rgba(21,101,192,0.08); color: var(--accent-dark); }
-.hub-btn--checkpoints .hub-btn__icon { background: rgba(255,152,0,0.1); color: var(--orange-dark); }
+.hub-btn--checkpoints .hub-btn__icon { background: rgba(76,175,80,0.1); color: var(--green-dark); }
 .hub-btn--tools .hub-btn__icon { background: rgba(124,77,255,0.1); color: #7C4DFF; }
-.hub-btn--refinement .hub-btn__icon { background: rgba(233,30,99,0.1); color: #C2185B; }
+.hub-btn--refinement .hub-btn__icon { background: rgba(76,175,80,0.1); color: var(--green-dark); }
+.hub-btn--receiving .hub-btn__icon { background: rgba(0,172,193,0.1); color: #00838F; }
 
 .hub-btn__label {
   font-size: var(--text-lg);
@@ -771,10 +812,14 @@ body::before {
 @media (max-width: 768px) {
   .hub-header { padding: var(--space-3) var(--space-4); }
   .hub-main { padding: var(--space-4); }
-  .hub-grid { grid-template-columns: 1fr; gap: var(--space-4); }
-  .hub-btn { min-height: 140px; padding: var(--space-6) var(--space-4); }
-  .hub-btn__icon { width: 44px; height: 44px; }
-  .hub-btn__label { font-size: var(--text-base); }
+  .hub-grid__top { grid-template-columns: 1fr; gap: var(--space-4); }
+  .hub-grid__bottom { grid-template-columns: repeat(2, 1fr); gap: var(--space-3); }
+  .hub-btn { min-height: 100px; padding: var(--space-4) var(--space-3); }
+  .hub-btn--hero { min-height: 160px; padding: var(--space-6) var(--space-4); }
+  .hub-btn--hero .hub-btn__icon { width: 52px; height: 52px; }
+  .hub-btn--hero .hub-btn__label { font-size: var(--text-lg); }
+  .hub-btn__icon { width: 40px; height: 40px; }
+  .hub-btn__label { font-size: var(--text-sm); }
   .section-header { padding: var(--space-3) var(--space-4); }
   .section-body { padding: var(--space-4); }
   .supply-grid { grid-template-columns: 1fr; gap: var(--space-3); }
@@ -1946,50 +1991,65 @@ body::before {
 
   <div class="hub-main">
     <div class="hub-grid">
-      <!-- Vital Supplies -->
-      <button class="hub-btn hub-btn--supplies" data-target="screen-supplies">
-        <div class="hub-btn__icon">
-          <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"/><polyline points="3.27 6.96 12 12.01 20.73 6.96"/><line x1="12" y1="22.08" x2="12" y2="12"/></svg>
-        </div>
-        <span class="hub-btn__label">Vital Supplies</span>
-        <span class="hub-btn__desc">Live inventory levels &amp; low-stock alerts</span>
-      </button>
+      <!-- TOP ROW: Hero Production Buttons -->
+      <div class="hub-grid__top">
+        <!-- Crude Production (Hero) -->
+        <button class="hub-btn hub-btn--hero hub-btn--checkpoints" data-target="screen-checkpoints">
+          <div class="hub-btn__icon">
+            <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg>
+          </div>
+          <span class="hub-btn__label">Crude Production</span>
+          <span class="hub-btn__desc">9-step crude production process flow</span>
+        </button>
 
-      <!-- Production Dashboards -->
-      <button class="hub-btn hub-btn--production" data-target="screen-production">
-        <div class="hub-btn__icon">
-          <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="2"/><path d="M3 9h18"/><path d="M9 21V9"/></svg>
-        </div>
-        <span class="hub-btn__label">Production</span>
-        <span class="hub-btn__desc">Dashboards for leadership &amp; operations</span>
-      </button>
+        <!-- Refinement Production (Hero) -->
+        <button class="hub-btn hub-btn--hero hub-btn--refinement" data-target="screen-refinement">
+          <div class="hub-btn__icon">
+            <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M12 2v4"/><path d="M12 18v4"/><path d="M4.93 4.93l2.83 2.83"/><path d="M16.24 16.24l2.83 2.83"/><path d="M2 12h4"/><path d="M18 12h4"/><path d="M4.93 19.07l2.83-2.83"/><path d="M16.24 7.76l2.83-2.83"/></svg>
+          </div>
+          <span class="hub-btn__label">Refinement Production</span>
+          <span class="hub-btn__desc">5-stage post-crude refinery process flow</span>
+        </button>
+      </div>
 
-      <!-- Crude Production -->
-      <button class="hub-btn hub-btn--checkpoints" data-target="screen-checkpoints">
-        <div class="hub-btn__icon">
-          <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg>
-        </div>
-        <span class="hub-btn__label">Crude Production</span>
-        <span class="hub-btn__desc">9-step crude production process flow</span>
-      </button>
+      <!-- BOTTOM ROW: Standard Buttons -->
+      <div class="hub-grid__bottom">
+        <!-- Vital Supplies -->
+        <button class="hub-btn hub-btn--supplies" data-target="screen-supplies">
+          <div class="hub-btn__icon">
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"/><polyline points="3.27 6.96 12 12.01 20.73 6.96"/><line x1="12" y1="22.08" x2="12" y2="12"/></svg>
+          </div>
+          <span class="hub-btn__label">Vital Supplies</span>
+          <span class="hub-btn__desc">Live inventory &amp; alerts</span>
+        </button>
 
-      <!-- Refinement -->
-      <button class="hub-btn hub-btn--refinement" data-target="screen-refinement">
-        <div class="hub-btn__icon">
-          <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M12 2v4"/><path d="M12 18v4"/><path d="M4.93 4.93l2.83 2.83"/><path d="M16.24 16.24l2.83 2.83"/><path d="M2 12h4"/><path d="M18 12h4"/><path d="M4.93 19.07l2.83-2.83"/><path d="M16.24 7.76l2.83-2.83"/></svg>
-        </div>
-        <span class="hub-btn__label">Refinement</span>
-        <span class="hub-btn__desc">5-stage post-crude refinery process flow</span>
-      </button>
+        <!-- Supply Receiving -->
+        <button class="hub-btn hub-btn--receiving" data-target="screen-receiving">
+          <div class="hub-btn__icon">
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><path d="M12 7v6"/><path d="M9 10h6"/></svg>
+          </div>
+          <span class="hub-btn__label">Supply Receiving</span>
+          <span class="hub-btn__desc">Log incoming shipments</span>
+        </button>
 
-      <!-- Tools -->
-      <button class="hub-btn hub-btn--tools" data-target="screen-tools">
-        <div class="hub-btn__icon">
-          <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="4" y="2" width="16" height="20" rx="2"/><line x1="8" y1="6" x2="16" y2="6"/><line x1="8" y1="10" x2="16" y2="10"/><line x1="8" y1="14" x2="12" y2="14"/></svg>
-        </div>
-        <span class="hub-btn__label">Tools</span>
-        <span class="hub-btn__desc">Salt SOP, Yield Calculator &amp; Team Mgmt</span>
-      </button>
+        <!-- Production Dashboards -->
+        <button class="hub-btn hub-btn--production" data-target="screen-production">
+          <div class="hub-btn__icon">
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="2"/><path d="M3 9h18"/><path d="M9 21V9"/></svg>
+          </div>
+          <span class="hub-btn__label">Production</span>
+          <span class="hub-btn__desc">Dashboards &amp; reports</span>
+        </button>
+
+        <!-- Tools -->
+        <button class="hub-btn hub-btn--tools" data-target="screen-tools">
+          <div class="hub-btn__icon">
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="4" y="2" width="16" height="20" rx="2"/><line x1="8" y1="6" x2="16" y2="6"/><line x1="8" y1="10" x2="16" y2="10"/><line x1="8" y1="14" x2="12" y2="14"/></svg>
+          </div>
+          <span class="hub-btn__label">Tools</span>
+          <span class="hub-btn__desc">SOP, Calculator &amp; Team</span>
+        </button>
+      </div>
     </div>
   </div>
 
@@ -2244,6 +2304,94 @@ body::before {
         </a>
       </div>
     </div>
+  </div>
+  <footer class="footer">
+    <a href="https://www.perplexity.ai/computer" target="_blank" rel="noopener noreferrer">Created with Perplexity Computer</a>
+  </footer>
+</div>
+
+<!-- ============================================================ -->
+<!-- SCREEN: SUPPLY RECEIVING                                      -->
+<!-- ============================================================ -->
+<div class="screen section-screen" id="screen-receiving">
+  <div class="section-header">
+    <div class="section-header-left">
+      <button class="btn-back" data-target="screen-hub">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 12H5"/><path d="M12 19l-7-7 7-7"/></svg>
+        Back
+      </button>
+      <span class="section-header-title">Supply Receiving</span>
+    </div>
+  </div>
+  <div class="section-body" style="padding: var(--space-6) var(--space-8); max-width: 700px; margin: 0 auto; width: 100%;">
+
+    <!-- Receiving Form -->
+    <div style="background: var(--card-bg); border: 1px solid var(--border); border-radius: var(--radius); padding: var(--space-6); margin-bottom: var(--space-6); box-shadow: var(--shadow);">
+      <h3 style="font-weight: 800; font-size: 1.125rem; color: var(--accent-dark); margin-bottom: var(--space-4);">Log Incoming Shipment</h3>
+
+      <div class="form-group" style="margin-bottom: var(--space-4);">
+        <label class="form-label" style="display:block; font-weight:600; font-size:0.8rem; text-transform:uppercase; letter-spacing:0.05em; color:var(--text-muted); margin-bottom:6px;">Supply Type</label>
+        <select id="recvSupplyType" style="width:100%; padding:12px 16px; border-radius:var(--radius); border:1px solid var(--border); background:var(--card-bg); color:var(--text); font-size:1rem; outline:none; transition:border-color 0.2s;" onfocus="this.style.borderColor='var(--accent)'" onblur="this.style.borderColor='var(--border)'">
+          <option value="">Select supply...</option>
+          <option value="DE Filter Aid">DE Filter Aid</option>
+          <option value="Soda Ash">Soda Ash</option>
+          <option value="Sodium Hydroxide">Sodium Hydroxide</option>
+          <option value="Citric Acid">Citric Acid</option>
+          <option value="Biomass">Biomass</option>
+          <option value="Acetone">Acetone</option>
+          <option value="Other">Other</option>
+        </select>
+      </div>
+
+      <div id="recvOtherNameGroup" style="display:none; margin-bottom: var(--space-4);">
+        <label class="form-label" style="display:block; font-weight:600; font-size:0.8rem; text-transform:uppercase; letter-spacing:0.05em; color:var(--text-muted); margin-bottom:6px;">Supply Name</label>
+        <input id="recvOtherName" type="text" placeholder="Enter supply name" style="width:100%; padding:12px 16px; border-radius:var(--radius); border:1px solid var(--border); background:var(--card-bg); color:var(--text); font-size:1rem; outline:none; box-sizing:border-box;" onfocus="this.style.borderColor='var(--accent)'" onblur="this.style.borderColor='var(--border)'">
+      </div>
+
+      <div style="display:grid; grid-template-columns:1fr 1fr; gap:var(--space-4); margin-bottom: var(--space-4);">
+        <div>
+          <label class="form-label" style="display:block; font-weight:600; font-size:0.8rem; text-transform:uppercase; letter-spacing:0.05em; color:var(--text-muted); margin-bottom:6px;">Quantity</label>
+          <input id="recvQuantity" type="number" min="0" step="any" placeholder="0" style="width:100%; padding:12px 16px; border-radius:var(--radius); border:1px solid var(--border); background:var(--card-bg); color:var(--text); font-size:1rem; outline:none; box-sizing:border-box;" onfocus="this.style.borderColor='var(--accent)'" onblur="this.style.borderColor='var(--border)'">
+        </div>
+        <div>
+          <label class="form-label" style="display:block; font-weight:600; font-size:0.8rem; text-transform:uppercase; letter-spacing:0.05em; color:var(--text-muted); margin-bottom:6px;">Unit</label>
+          <select id="recvUnit" style="width:100%; padding:12px 16px; border-radius:var(--radius); border:1px solid var(--border); background:var(--card-bg); color:var(--text); font-size:1rem; outline:none; transition:border-color 0.2s;" onfocus="this.style.borderColor='var(--accent)'" onblur="this.style.borderColor='var(--border)'">
+            <option value="bags">Bags</option>
+            <option value="boxes">Boxes</option>
+            <option value="kg">Kilograms</option>
+            <option value="liters">Liters</option>
+            <option value="drums">Drums</option>
+            <option value="pallets">Pallets</option>
+          </select>
+        </div>
+      </div>
+
+      <div class="form-group" style="margin-bottom: var(--space-4);">
+        <label class="form-label" style="display:block; font-weight:600; font-size:0.8rem; text-transform:uppercase; letter-spacing:0.05em; color:var(--text-muted); margin-bottom:6px;">Vendor / Supplier</label>
+        <input id="recvVendor" type="text" placeholder="Enter vendor name" style="width:100%; padding:12px 16px; border-radius:var(--radius); border:1px solid var(--border); background:var(--card-bg); color:var(--text); font-size:1rem; outline:none; box-sizing:border-box;" onfocus="this.style.borderColor='var(--accent)'" onblur="this.style.borderColor='var(--border)'">
+      </div>
+
+      <div class="form-group" style="margin-bottom: var(--space-4);">
+        <label class="form-label" style="display:block; font-weight:600; font-size:0.8rem; text-transform:uppercase; letter-spacing:0.05em; color:var(--text-muted); margin-bottom:6px;">Notes (optional)</label>
+        <textarea id="recvNotes" rows="2" placeholder="PO number, lot number, condition, etc." style="width:100%; padding:12px 16px; border-radius:var(--radius); border:1px solid var(--border); background:var(--card-bg); color:var(--text); font-size:1rem; outline:none; resize:vertical; box-sizing:border-box; font-family:inherit;" onfocus="this.style.borderColor='var(--accent)'" onblur="this.style.borderColor='var(--border)'"></textarea>
+      </div>
+
+      <button id="recvSubmitBtn" onclick="submitReceiving()" style="width:100%; padding:14px; border-radius:var(--radius); border:none; background:var(--accent-dark); color:#fff; font-size:1rem; font-weight:700; cursor:pointer; transition:background 0.2s, transform 0.1s;" onmousedown="this.style.transform='scale(0.98)'" onmouseup="this.style.transform='scale(1)'">
+        Log Shipment
+      </button>
+    </div>
+
+    <!-- Recent Receiving Log -->
+    <div style="background: var(--card-bg); border: 1px solid var(--border); border-radius: var(--radius); padding: var(--space-6); box-shadow: var(--shadow);">
+      <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:var(--space-4);">
+        <h3 style="font-weight: 800; font-size: 1.125rem; color: var(--accent-dark);">Recent Shipments</h3>
+        <button onclick="clearReceivingLog()" style="padding:6px 14px; border-radius:var(--radius); border:1px solid var(--border); background:transparent; color:var(--text-muted); font-size:0.75rem; font-weight:600; cursor:pointer; text-transform:uppercase; letter-spacing:0.05em;">Clear Log</button>
+      </div>
+      <div id="recvLogList" style="display:flex; flex-direction:column; gap:var(--space-3);">
+        <p style="color:var(--text-muted); font-size:0.875rem; text-align:center; padding:var(--space-4);">No shipments logged yet today.</p>
+      </div>
+    </div>
+
   </div>
   <footer class="footer">
     <a href="https://www.perplexity.ai/computer" target="_blank" rel="noopener noreferrer">Created with Perplexity Computer</a>
@@ -3793,6 +3941,126 @@ body::before {
       ycResults.scrollIntoView({ behavior: 'smooth', block: 'start' });
     });
   }
+
+  // ===== SUPPLY RECEIVING =====
+  var RECV_STORAGE_KEY = 'kmjzReceivingLog';
+
+  function getReceivingLog() {
+    try {
+      var data = localStorage.getItem(RECV_STORAGE_KEY);
+      return data ? JSON.parse(data) : [];
+    } catch(e) { return []; }
+  }
+
+  function saveReceivingLog(log) {
+    try { localStorage.setItem(RECV_STORAGE_KEY, JSON.stringify(log)); } catch(e) {}
+  }
+
+  // Show/hide "Other" name input
+  var recvTypeSelect = document.getElementById('recvSupplyType');
+  if (recvTypeSelect) {
+    recvTypeSelect.addEventListener('change', function() {
+      var otherGroup = document.getElementById('recvOtherNameGroup');
+      if (otherGroup) {
+        otherGroup.style.display = this.value === 'Other' ? 'block' : 'none';
+      }
+    });
+  }
+
+  window.submitReceiving = function() {
+    var typeEl = document.getElementById('recvSupplyType');
+    var qtyEl = document.getElementById('recvQuantity');
+    var unitEl = document.getElementById('recvUnit');
+    var vendorEl = document.getElementById('recvVendor');
+    var notesEl = document.getElementById('recvNotes');
+    var otherNameEl = document.getElementById('recvOtherName');
+    var submitBtn = document.getElementById('recvSubmitBtn');
+
+    var supplyType = typeEl ? typeEl.value : '';
+    if (supplyType === 'Other') {
+      supplyType = otherNameEl ? otherNameEl.value.trim() : '';
+    }
+    var qty = qtyEl ? parseFloat(qtyEl.value) : 0;
+    var unit = unitEl ? unitEl.value : 'bags';
+    var vendor = vendorEl ? vendorEl.value.trim() : '';
+    var notes = notesEl ? notesEl.value.trim() : '';
+
+    if (!supplyType) { toast('Please select a supply type', 'error'); return; }
+    if (!qty || qty <= 0) { toast('Please enter a valid quantity', 'error'); return; }
+
+    var entry = {
+      id: 'recv_' + Date.now(),
+      supply: supplyType,
+      quantity: qty,
+      unit: unit,
+      vendor: vendor,
+      notes: notes,
+      operator: currentUser ? currentUser.displayName : 'Unknown',
+      timestamp: new Date().toISOString()
+    };
+
+    var log = getReceivingLog();
+    log.unshift(entry);
+    if (log.length > 50) log = log.slice(0, 50);
+    saveReceivingLog(log);
+
+    // Reset form
+    if (typeEl) typeEl.value = '';
+    if (qtyEl) qtyEl.value = '';
+    if (vendorEl) vendorEl.value = '';
+    if (notesEl) notesEl.value = '';
+    if (otherNameEl) otherNameEl.value = '';
+    var otherGroup = document.getElementById('recvOtherNameGroup');
+    if (otherGroup) otherGroup.style.display = 'none';
+
+    toast(qty + ' ' + unit + ' of ' + supplyType + ' logged', 'success');
+    renderReceivingLog();
+  };
+
+  window.clearReceivingLog = function() {
+    if (confirm('Clear all receiving log entries?')) {
+      saveReceivingLog([]);
+      renderReceivingLog();
+      toast('Receiving log cleared', 'info');
+    }
+  };
+
+  function renderReceivingLog() {
+    var container = document.getElementById('recvLogList');
+    if (!container) return;
+    var log = getReceivingLog();
+    if (log.length === 0) {
+      container.innerHTML = '<p style="color:var(--text-muted); font-size:0.875rem; text-align:center; padding:var(--space-4);">No shipments logged yet today.</p>';
+      return;
+    }
+    var html = '';
+    for (var i = 0; i < Math.min(log.length, 20); i++) {
+      var e = log[i];
+      var d = new Date(e.timestamp);
+      var timeStr = (d.getMonth()+1) + '/' + d.getDate() + ' ' + d.toLocaleTimeString([], {hour:'2-digit', minute:'2-digit'});
+      html += '<div style="display:flex; justify-content:space-between; align-items:center; padding:12px 16px; background:rgba(0,172,193,0.04); border:1px solid var(--border); border-radius:var(--radius); border-left:3px solid #00ACC1;">';
+      html += '<div>';
+      html += '<div style="font-weight:700; font-size:0.95rem; color:var(--text);">' + escHtml(e.supply) + '</div>';
+      html += '<div style="font-size:0.8rem; color:var(--text-muted);">' + e.quantity + ' ' + e.unit;
+      if (e.vendor) html += ' &middot; ' + escHtml(e.vendor);
+      html += '</div>';
+      if (e.notes) html += '<div style="font-size:0.75rem; color:var(--text-muted); margin-top:2px; font-style:italic;">' + escHtml(e.notes) + '</div>';
+      html += '</div>';
+      html += '<div style="text-align:right;">';
+      html += '<div style="font-size:0.75rem; color:var(--text-muted);">' + timeStr + '</div>';
+      html += '<div style="font-size:0.7rem; color:var(--text-muted);">' + escHtml(e.operator) + '</div>';
+      html += '</div>';
+      html += '</div>';
+    }
+    container.innerHTML = html;
+  }
+
+  // Render on screen show
+  var origShowScreen = showScreen;
+  showScreen = function(id) {
+    origShowScreen(id);
+    if (id === 'screen-receiving') { renderReceivingLog(); }
+  };
 
 })();
 </script>
