@@ -91,15 +91,15 @@ body::before {
 .screen { display: none; position: relative; z-index: 1; min-height: 100vh; }
 .screen.active { display: flex; overflow-y: auto; max-height: 100vh; }
 
-/* ========== LOGIN SCREEN ========== */
-.login-screen {
+/* ========== OPERATOR SELECT SCREEN ========== */
+.select-screen {
   flex-direction: column;
   align-items: center;
   justify-content: center;
   padding: var(--space-8);
   width: 100%;
 }
-.login-card {
+.select-card {
   background: var(--card-bg);
   backdrop-filter: blur(12px);
   -webkit-backdrop-filter: blur(12px);
@@ -111,61 +111,47 @@ body::before {
   max-width: 400px;
   text-align: center;
 }
-.login-logo {
+.select-logo {
   width: 72px;
   height: 72px;
   border-radius: var(--radius-md);
   margin: 0 auto var(--space-5);
   object-fit: contain;
 }
-.login-title {
+.select-title {
   font-size: var(--text-xl);
   font-weight: 800;
   color: var(--accent-dark);
   margin-bottom: var(--space-1);
 }
-.login-subtitle {
+.select-subtitle {
   font-size: var(--text-sm);
   color: var(--text-muted);
   margin-bottom: var(--space-8);
 }
-.login-form { text-align: left; }
-.form-label {
-  display: block;
-  font-size: var(--text-xs);
-  font-weight: 600;
-  color: var(--text-muted);
-  text-transform: uppercase;
-  letter-spacing: 0.06em;
-  margin-bottom: var(--space-1);
-}
-.form-input {
+.operator-dropdown {
   width: 100%;
   padding: var(--space-3) var(--space-4);
   font-size: var(--text-lg);
   font-family: var(--font-body);
-  font-weight: 700;
-  letter-spacing: 0.3em;
+  font-weight: 600;
   text-align: center;
   border: 2px solid var(--border);
   border-radius: var(--radius-md);
   background: #fff;
   color: var(--text);
   outline: none;
+  appearance: none;
+  -webkit-appearance: none;
+  cursor: pointer;
   transition: border-color var(--transition-interactive);
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8'%3E%3Cpath d='M1 1l5 5 5-5' stroke='%235a6a7a' stroke-width='2' fill='none'/%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: right 16px center;
 }
-.form-input:focus { border-color: var(--accent); }
-.form-input::placeholder { letter-spacing: 0.1em; font-weight: 400; color: #bbb; }
-.form-error {
-  font-size: var(--text-xs);
-  color: var(--red);
-  font-weight: 600;
-  min-height: 1.4em;
-  margin-top: var(--space-2);
-  text-align: center;
-}
-.form-group { margin-bottom: var(--space-5); }
-.btn-login {
+.operator-dropdown:focus { border-color: var(--accent); }
+.operator-dropdown option { font-weight: 500; text-align: left; }
+.btn-continue {
   display: block;
   width: 100%;
   padding: var(--space-4);
@@ -177,17 +163,21 @@ body::before {
   border: none;
   border-radius: var(--radius-md);
   cursor: pointer;
+  margin-top: var(--space-5);
   transition: background var(--transition-interactive), transform var(--transition-interactive);
+  opacity: 0.5;
+  pointer-events: none;
 }
-.btn-login:hover { background: var(--accent); transform: translateY(-1px); }
-.btn-login:active { transform: translateY(0); }
-.login-footer {
+.btn-continue.ready { opacity: 1; pointer-events: auto; }
+.btn-continue.ready:hover { background: var(--accent); transform: translateY(-1px); }
+.btn-continue.ready:active { transform: translateY(0); }
+.select-footer {
   margin-top: var(--space-6);
   font-size: var(--text-xs);
   color: var(--text-muted);
 }
-.login-footer a { color: var(--text-muted); text-decoration: none; }
-.login-footer a:hover { color: var(--accent); }
+.select-footer a { color: var(--text-muted); text-decoration: none; }
+.select-footer a:hover { color: var(--accent); }
 
 /* ========== HUB SCREEN (MASTER PAGE) ========== */
 .hub-screen { flex-direction: column; }
@@ -1944,22 +1934,21 @@ body::before {
 <div class="toast-container" id="toastContainer"></div>
 
 <!-- ============================================================ -->
-<!-- SCREEN 1: LOGIN                                                -->
+<!-- SCREEN 1: OPERATOR SELECT                                      -->
 <!-- ============================================================ -->
-<div class="screen login-screen active" id="screen-login">
-  <div class="login-card">
-    <img src="kmjz-logo.jpg" alt="KMJZ Holdings" class="login-logo">
-    <h1 class="login-title">KMJZ Operations</h1>
-    <p class="login-subtitle">Enter your 4-digit code to continue</p>
-    <form class="login-form" id="loginForm" autocomplete="off">
-      <div class="form-group">
-        <label class="form-label" for="loginCode">Operator Code</label>
-        <input class="form-input" type="password" id="loginCode" placeholder="- - - -" maxlength="4" pattern="[0-9]{4}" inputmode="numeric" required autocomplete="off">
-      </div>
-      <div class="form-error" id="loginError"></div>
-      <button type="submit" class="btn-login">Enter</button>
-    </form>
-    <div class="login-footer">
+<div class="screen select-screen active" id="screen-select">
+  <div class="select-card">
+    <img src="kmjz-logo.jpg" alt="KMJZ Holdings" class="select-logo">
+    <h1 class="select-title">KMJZ Operations</h1>
+    <p class="select-subtitle">Select your name to continue</p>
+    <div style="text-align: left; margin-bottom: var(--space-3);">
+      <label class="form-label" for="operatorSelect">Who are you?</label>
+    </div>
+    <select class="operator-dropdown" id="operatorSelect">
+      <option value="" disabled selected>— Select your name —</option>
+    </select>
+    <button class="btn-continue" id="btnContinue">Continue</button>
+    <div class="select-footer">
       <a href="https://www.perplexity.ai/computer" target="_blank" rel="noopener noreferrer">Created with Perplexity Computer</a>
     </div>
   </div>
@@ -3152,6 +3141,7 @@ body::before {
       // Update global ref and refresh UI
       window.STAFF = STAFF;
       if (typeof populateOperatorDropdowns === 'function') populateOperatorDropdowns();
+      if (typeof populateOperatorSelect === 'function') populateOperatorSelect();
       if (typeof renderTeamTable === 'function') renderTeamTable();
     }
   }).catch(function(err) {
@@ -3166,6 +3156,7 @@ body::before {
           for (var i = 0; i < parsed.length; i++) STAFF.push(parsed[i]);
           window.STAFF = STAFF;
           if (typeof populateOperatorDropdowns === 'function') populateOperatorDropdowns();
+      if (typeof populateOperatorSelect === 'function') populateOperatorSelect();
           if (typeof renderTeamTable === 'function') renderTeamTable();
         }
       }
@@ -3187,49 +3178,78 @@ body::before {
     if (id === 'screen-team') { renderTeamTable(); }
   }
 
-  // ===== LOGIN =====
-  var loginForm = document.getElementById('loginForm');
-  var loginCode = document.getElementById('loginCode');
-  var loginError = document.getElementById('loginError');
+  // ===== OPERATOR SELECT (Dropdown) =====
+  var operatorSelect = document.getElementById('operatorSelect');
+  var btnContinue = document.getElementById('btnContinue');
 
-  loginForm.addEventListener('submit', function(e) {
-    e.preventDefault();
-    var code = loginCode.value.trim();
-
-    if (code.length !== 4 || !/^\d{4}$/.test(code)) {
-      loginError.textContent = 'Enter a valid 4-digit code.';
-      loginCode.value = '';
-      loginCode.focus();
-      return;
+  // Populate the dropdown from STAFF list
+  function populateOperatorSelect() {
+    // Clear existing options (keep the placeholder)
+    while (operatorSelect.options.length > 1) operatorSelect.remove(1);
+    // Sort alphabetically by displayName
+    var sorted = STAFF.slice().sort(function(a, b) {
+      return a.displayName.localeCompare(b.displayName);
+    });
+    for (var i = 0; i < sorted.length; i++) {
+      var opt = document.createElement('option');
+      opt.value = sorted[i].code;
+      opt.textContent = sorted[i].displayName;
+      operatorSelect.appendChild(opt);
     }
+    // If there's a saved operator in localStorage, pre-select them
+    var savedCode = storageGet('kmjz_operator_code');
+    if (savedCode) {
+      operatorSelect.value = savedCode;
+      btnContinue.classList.add('ready');
+    }
+  }
+  populateOperatorSelect();
+
+  operatorSelect.addEventListener('change', function() {
+    if (this.value) {
+      btnContinue.classList.add('ready');
+    } else {
+      btnContinue.classList.remove('ready');
+    }
+  });
+
+  btnContinue.addEventListener('click', function() {
+    var code = operatorSelect.value;
+    if (!code) return;
 
     var user = null;
     for (var i = 0; i < STAFF.length; i++) {
-      if (STAFF[i].code === code) {
-        user = STAFF[i];
-        break;
-      }
+      if (STAFF[i].code === code) { user = STAFF[i]; break; }
     }
-
-    if (!user) {
-      loginError.textContent = 'Invalid code. Try again.';
-      loginCode.value = '';
-      loginCode.focus();
-      return;
-    }
+    if (!user) return;
 
     currentUser = user;
-    loginError.textContent = '';
+    // Save to localStorage so sub-apps can read it
+    storageSet('kmjz_operator_code', user.code);
+    storageSet('kmjz_operator_name', user.displayName);
+    storageSet('kmjz_operator_role', user.role || 'Operator');
 
     var greetEl = document.getElementById('hubGreeting');
-    if (greetEl) {
-      greetEl.textContent = 'Hi ' + user.displayName;
-    }
+    if (greetEl) greetEl.textContent = 'Hi ' + user.displayName;
 
     showScreen('screen-hub');
   });
 
-  loginCode.focus();
+  // Auto-enter if operator already selected in this session
+  (function() {
+    var savedCode = storageGet('kmjz_operator_code');
+    if (savedCode) {
+      for (var i = 0; i < STAFF.length; i++) {
+        if (STAFF[i].code === savedCode) {
+          currentUser = STAFF[i];
+          var greetEl = document.getElementById('hubGreeting');
+          if (greetEl) greetEl.textContent = 'Hi ' + STAFF[i].displayName;
+          showScreen('screen-hub');
+          return;
+        }
+      }
+    }
+  })();
 
   // ===== HUB BUTTONS =====
   var hubBtns = document.querySelectorAll('.hub-btn[data-target]');
@@ -3938,6 +3958,7 @@ body::before {
     // Refresh refinement operator dropdowns so the new/edited person is available immediately
     window.STAFF = STAFF;
     if (typeof populateOperatorDropdowns === 'function') populateOperatorDropdowns();
+      if (typeof populateOperatorSelect === 'function') populateOperatorSelect();
     closeModal();
   });
 
@@ -3978,6 +3999,7 @@ body::before {
       // Refresh refinement operator dropdowns so the removed person is gone
       window.STAFF = STAFF;
       if (typeof populateOperatorDropdowns === 'function') populateOperatorDropdowns();
+      if (typeof populateOperatorSelect === 'function') populateOperatorSelect();
     }
     closeRemoveModal();
   });
