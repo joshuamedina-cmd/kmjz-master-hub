@@ -315,6 +315,8 @@ body::before {
 .hub-btn--checkpoints:hover { border-color: var(--orange); }
 .hub-btn--tools::before { background: #7C4DFF; }
 .hub-btn--tools:hover { border-color: #7C4DFF; }
+.hub-btn--refinement::before { background: #E91E63; }
+.hub-btn--refinement:hover { border-color: #E91E63; }
 
 .hub-btn__icon {
   width: 56px;
@@ -328,6 +330,7 @@ body::before {
 .hub-btn--production .hub-btn__icon { background: rgba(21,101,192,0.08); color: var(--accent-dark); }
 .hub-btn--checkpoints .hub-btn__icon { background: rgba(255,152,0,0.1); color: var(--orange-dark); }
 .hub-btn--tools .hub-btn__icon { background: rgba(124,77,255,0.1); color: #7C4DFF; }
+.hub-btn--refinement .hub-btn__icon { background: rgba(233,30,99,0.1); color: #C2185B; }
 
 .hub-btn__label {
   font-size: var(--text-lg);
@@ -1405,6 +1408,15 @@ body::before {
         <span class="hub-btn__desc">9-step production process flow</span>
       </button>
 
+      <!-- Refinement -->
+      <button class="hub-btn hub-btn--refinement" data-target="screen-refinement">
+        <div class="hub-btn__icon">
+          <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M12 2v4"/><path d="M12 18v4"/><path d="M4.93 4.93l2.83 2.83"/><path d="M16.24 16.24l2.83 2.83"/><path d="M2 12h4"/><path d="M18 12h4"/><path d="M4.93 19.07l2.83-2.83"/><path d="M16.24 7.76l2.83-2.83"/></svg>
+        </div>
+        <span class="hub-btn__label">Refinement</span>
+        <span class="hub-btn__desc">5-stage post-crude refinery process flow</span>
+      </button>
+
       <!-- Tools -->
       <button class="hub-btn hub-btn--tools" data-target="screen-tools">
         <div class="hub-btn__icon">
@@ -1666,6 +1678,84 @@ body::before {
           <div class="process-card__desc">Wet Crude &rarr; Dry Crude</div>
         </a>
       </div>
+    </div>
+  </div>
+  <footer class="footer">
+    <a href="https://www.perplexity.ai/computer" target="_blank" rel="noopener noreferrer">Created with Perplexity Computer</a>
+  </footer>
+</div>
+
+<!-- ============================================================ -->
+<!-- SCREEN: REFINEMENT                                              -->
+<!-- ============================================================ -->
+<div class="screen section-screen" id="screen-refinement">
+  <div class="section-header">
+    <div class="section-header-left">
+      <button class="btn-back" data-target="screen-hub">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 12H5"/><path d="M12 19l-7-7 7-7"/></svg>
+        Back
+      </button>
+      <span class="section-header-title">Refinement</span>
+    </div>
+    <span class="hub-timestamp"><span class="live-dot"></span><span class="ts-sync">Loading&hellip;</span></span>
+  </div>
+  <div class="section-body">
+    <div class="process-flow">
+      <!-- Refinement Step 1: Soak -->
+      <div class="process-step">
+        <a href="https://refinement-app.vercel.app" target="_blank" rel="noopener noreferrer" class="process-card">
+          <div class="process-card__step">1</div>
+          <div class="process-card__icon"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2.69l5.66 5.66a8 8 0 1 1-11.31 0z"/></svg></div>
+          <div class="process-card__name">Soak</div>
+          <div class="process-card__desc">Crude soak in acetone</div>
+        </a>
+      </div>
+      <div class="process-arrow"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14"/><path d="M12 5l7 7-7 7"/></svg></div>
+      <!-- Refinement Step 2: Pinnacle -->
+      <div class="process-step">
+        <a href="https://refinement-app.vercel.app" target="_blank" rel="noopener noreferrer" class="process-card">
+          <div class="process-card__step">2</div>
+          <div class="process-card__icon"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg></div>
+          <div class="process-card__name">Pinnacle</div>
+          <div class="process-card__desc">Recovery &amp; separation</div>
+        </a>
+      </div>
+      <div class="process-arrow"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14"/><path d="M12 5l7 7-7 7"/></svg></div>
+      <!-- Refinement Step 3: Rotovap -->
+      <div class="process-step">
+        <a href="https://refinement-app.vercel.app" target="_blank" rel="noopener noreferrer" class="process-card">
+          <div class="process-card__step">3</div>
+          <div class="process-card__icon"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M8 12h8"/><path d="M12 8v8"/></svg></div>
+          <div class="process-card__name">Rotovap</div>
+          <div class="process-card__desc">Solvent recovery</div>
+        </a>
+      </div>
+      <div class="process-arrow"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14"/><path d="M12 5l7 7-7 7"/></svg></div>
+      <!-- Refinement Step 4: Ovens & Purge -->
+      <div class="process-step">
+        <a href="https://refinement-app.vercel.app" target="_blank" rel="noopener noreferrer" class="process-card">
+          <div class="process-card__step">4</div>
+          <div class="process-card__icon"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2v6"/><path d="M12 18v4"/><circle cx="12" cy="12" r="4"/><path d="M4.93 4.93l2.83 2.83"/><path d="M16.24 16.24l2.83 2.83"/><path d="M2 12h4"/><path d="M18 12h4"/></svg></div>
+          <div class="process-card__name">Ovens &amp; Purge</div>
+          <div class="process-card__desc">Heat purge cycle</div>
+        </a>
+      </div>
+      <div class="process-arrow"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14"/><path d="M12 5l7 7-7 7"/></svg></div>
+      <!-- Refinement Step 5: Prep & Weigh -->
+      <div class="process-step">
+        <a href="https://refinement-app.vercel.app" target="_blank" rel="noopener noreferrer" class="process-card">
+          <div class="process-card__step">5</div>
+          <div class="process-card__icon"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 2L3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4z"/><line x1="3" y1="6" x2="21" y2="6"/><path d="M16 10a4 4 0 0 1-8 0"/></svg></div>
+          <div class="process-card__name">Prep &amp; Weigh</div>
+          <div class="process-card__desc">Final weight &amp; Raw MIT</div>
+        </a>
+      </div>
+    </div>
+    <div style="text-align:center; margin-top: var(--space-6);">
+      <a href="https://refinement-app.vercel.app" target="_blank" rel="noopener noreferrer" style="display:inline-flex; align-items:center; gap:8px; padding:14px 28px; background:#E91E63; color:#fff; border-radius:var(--radius-md); font-weight:700; font-size:var(--text-base); text-decoration:none; transition:background 180ms ease;">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg>
+        Open Refinement App
+      </a>
     </div>
   </div>
   <footer class="footer">
